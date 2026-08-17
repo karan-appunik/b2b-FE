@@ -1,15 +1,189 @@
-import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import * as priceListsApi from '../../api/priceLists.api'
+import * as productsApi from '../../api/products.api'
+import { parseCsv, parseBulkPriceListCsv } from '../../utils/csv'
+
+function TypeBadge({ pricingType, itemCount }) {
+  if (pricingType === 'automatic') {
+    return (
+      <span className="inline-flex items-center gap-1 rounded-full bg-purple-50 px-2 py-0.5 text-xs font-medium text-purple-700">
+        Automatic
+      </span>
+    )
+  }
+  return (
+    <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700">
+      <svg className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+        <path d="M9 12a.75.75 0 0 0 1.5 0V6.31l1.72 1.72a.75.75 0 1 0 1.06-1.06l-3-3a.75.75 0 0 0-1.06 0l-3 3a.75.75 0 1 0 1.06 1.06L9 6.31V12Z" />
+        <path d="M3.5 15a.75.75 0 0 1 .75.75v1.5c0 .414.336.75.75.75h10a.75.75 0 0 0 .75-.75v-1.5a.75.75 0 0 1 1.5 0v1.5A2.25 2.25 0 0 1 15 19.5H5A2.25 2.25 0 0 1 2.75 17.25v-1.5a.75.75 0 0 1 .75-.75Z" />
+      </svg>
+      Manual ({itemCount})
+    </span>
+  )
+}
+
+function DownloadIcon() {
+  return (
+    <svg className="h-[18px] w-[18px]" viewBox="0 0 20 20" fill="currentColor">
+      <path
+        fillRule="evenodd"
+        d="M10 3a.75.75 0 01.75.75v10.638l3.96-4.158a.75.75 0 111.08 1.04l-5.25 5.5a.75.75 0 01-1.08 0l-5.25-5.5a.75.75 0 111.08-1.04l3.96 4.158V3.75A.75.75 0 0110 3z"
+        clipRule="evenodd"
+      />
+      <path d="M3.5 12.75a.75.75 0 00-1.5 0v2.5A2.75 2.75 0 004.75 18h10.5A2.75 2.75 0 0018 15.25v-2.5a.75.75 0 00-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5z" />
+    </svg>
+  )
+}
+
+function EditIcon() {
+  return (
+    <svg className="h-[18px] w-[18px]" viewBox="0 0 20 20" fill="currentColor">
+      <path d="M5.433 13.917l1.262-3.155A4 4 0 017.58 9.42l6.92-6.918a2.121 2.121 0 013 3l-6.92 6.918c-.383.383-.84.685-1.343.885l-3.154 1.262a.5.5 0 01-.65-.65z" />
+      <path d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10a.75.75 0 000-1.5H4.75A2.75 2.75 0 002 5.75v9.5A2.75 2.75 0 004.75 18h9.5A2.75 2.75 0 0017 15.25V10a.75.75 0 00-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5z" />
+    </svg>
+  )
+}
+
+function ClearIcon() {
+  return (
+    <svg className="h-[18px] w-[18px]" viewBox="0 0 20 20" fill="currentColor">
+      <path
+        fillRule="evenodd"
+        d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 000 2h6a1 1 0 100-2H7z"
+        clipRule="evenodd"
+      />
+    </svg>
+  )
+}
+
+function TrashIcon() {
+  return (
+    <svg className="h-[18px] w-[18px]" viewBox="0 0 20 20" fill="currentColor">
+      <path
+        fillRule="evenodd"
+        d="M8.75 1A2.75 2.75 0 006 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 10.23 1.482l.149-.022.841 10.518A2.75 2.75 0 007.596 19h4.807a2.75 2.75 0 002.742-2.53l.841-10.52.149.023a.75.75 0 00.23-1.482 41.03 41.03 0 00-2.365-.298V3.75A2.75 2.75 0 0011.25 1h-2.5zM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4zM8.58 7.72a.75.75 0 00-1.5.06l.3 7.5a.75.75 0 101.5-.06l-.3-7.5zm4.34.06a.75.75 0 10-1.5-.06l-.3 7.5a.75.75 0 101.5.06l.3-7.5z"
+        clipRule="evenodd"
+      />
+    </svg>
+  )
+}
+
+function RowMenu({ onDownload, onEdit, onClear, onDelete }) {
+  const [open, setOpen] = useState(false)
+  const [position, setPosition] = useState(null)
+  const buttonRef = useRef(null)
+  const menuRef = useRef(null)
+
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (
+        buttonRef.current &&
+        !buttonRef.current.contains(e.target) &&
+        menuRef.current &&
+        !menuRef.current.contains(e.target)
+      ) {
+        setOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  function toggleOpen() {
+    if (!open && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect()
+      setPosition({ top: rect.bottom + 4, right: window.innerWidth - rect.right })
+    }
+    setOpen((o) => !o)
+  }
+
+  function runAction(action) {
+    setOpen(false)
+    action()
+  }
+
+  return (
+    <div className="inline-block text-left">
+      <button
+        ref={buttonRef}
+        onClick={toggleOpen}
+        className="flex items-center gap-1 rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
+      >
+        More actions
+        <svg className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
+          <path
+            fillRule="evenodd"
+            d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+            clipRule="evenodd"
+          />
+        </svg>
+      </button>
+      {open &&
+        position &&
+        createPortal(
+          <div
+            ref={menuRef}
+            style={{ position: 'fixed', top: position.top, right: position.right }}
+            className="z-50 w-44 overflow-hidden rounded-lg border border-gray-200 bg-white py-1 shadow-lg"
+          >
+            <button
+              onClick={() => runAction(onDownload)}
+              className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
+            >
+              <DownloadIcon />
+              Download CSV
+            </button>
+            <button
+              onClick={() => runAction(onEdit)}
+              className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-teal-700 hover:bg-gray-50"
+            >
+              <EditIcon />
+              Edit
+            </button>
+            <button
+              onClick={() => runAction(onClear)}
+              className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
+            >
+              <ClearIcon />
+              Clear
+            </button>
+            <button
+              onClick={() => runAction(onDelete)}
+              className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-red-600 hover:bg-gray-50"
+            >
+              <TrashIcon />
+              Delete
+            </button>
+          </div>,
+          document.body,
+        )}
+    </div>
+  )
+}
 
 export default function PriceListsPage() {
+  const navigate = useNavigate()
   const [priceLists, setPriceLists] = useState([])
+  const [products, setProducts] = useState([])
+  const [uploadMessage, setUploadMessage] = useState('')
+  const [uploadError, setUploadError] = useState('')
+  const fileInputRef = useRef(null)
+  const uploadTargetRef = useRef(null)
+  const [bulkModalOpen, setBulkModalOpen] = useState(false)
+  const [bulkFile, setBulkFile] = useState(null)
+  const [bulkUploading, setBulkUploading] = useState(false)
+  const [bulkError, setBulkError] = useState('')
 
   function refresh() {
     priceListsApi.list().then(setPriceLists)
   }
 
-  useEffect(refresh, [])
+  useEffect(() => {
+    refresh()
+    productsApi.list().then(setProducts)
+  }, [])
 
   async function handleDelete(id) {
     if (!confirm('Delete this price list? Assigned customers will be unassigned.')) return
@@ -17,26 +191,172 @@ export default function PriceListsPage() {
     refresh()
   }
 
+  async function handleDownload(pl) {
+    setUploadMessage('')
+    setUploadError('')
+    try {
+      const full = await priceListsApi.get(pl._id)
+      const rows = full.items.map((item) => `${item.product.sku},${item.price}`)
+      const csv = ['sku,price', ...rows].join('\n')
+      const blob = new Blob([csv], { type: 'text/csv' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `${pl.handle || pl.name}-prices.csv`
+      a.click()
+      URL.revokeObjectURL(url)
+    } catch {
+      setUploadError(`Could not download CSV for "${pl.name}".`)
+    }
+  }
+
+  async function handleClear(pl) {
+    if (!confirm(`Clear all prices from "${pl.name}"? This removes every product from the list.`)) return
+    await priceListsApi.saveItems(pl._id, [])
+    setUploadMessage(`Cleared all prices from "${pl.name}".`)
+    refresh()
+  }
+
+  function triggerUpload(priceList) {
+    setUploadMessage('')
+    setUploadError('')
+    uploadTargetRef.current = priceList
+    fileInputRef.current?.click()
+  }
+
+  async function handleFileSelected(e) {
+    const file = e.target.files?.[0]
+    const priceList = uploadTargetRef.current
+    e.target.value = ''
+    if (!file || !priceList) return
+
+    try {
+      const text = await file.text()
+      const rows = parseCsv(text)
+      const bySku = new Map(products.map((p) => [p.sku, p._id]))
+      const items = rows.filter((row) => bySku.has(row.sku)).map((row) => ({
+        product: bySku.get(row.sku),
+        price: row.price,
+      }))
+
+      if (items.length === 0) {
+        setUploadError(`No matching products found in "${priceList.name}" upload.`)
+        return
+      }
+
+      await priceListsApi.saveItems(priceList._id, items)
+      setUploadMessage(`Updated ${items.length} price${items.length === 1 ? '' : 's'} in "${priceList.name}".`)
+      refresh()
+    } catch (err) {
+      setUploadError(err.response?.data?.message || 'Upload failed')
+    }
+  }
+
+  function openBulkModal() {
+    setBulkFile(null)
+    setBulkError('')
+    setBulkModalOpen(true)
+  }
+
+  function closeBulkModal() {
+    setBulkModalOpen(false)
+    setBulkFile(null)
+    setBulkError('')
+  }
+
+  function handleBulkFileChosen(e) {
+    const file = e.target.files?.[0]
+    e.target.value = ''
+    if (file) setBulkFile(file)
+  }
+
+  function handleBulkDrop(e) {
+    e.preventDefault()
+    const file = e.dataTransfer.files?.[0]
+    if (file) setBulkFile(file)
+  }
+
+  function handleDownloadTemplate() {
+    const csv = ['sku,price', 'SKU-1,12', 'SKU-2,15'].join('\n')
+    const blob = new Blob([csv], { type: 'text/csv' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'pricing_template.csv'
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
+  async function handleBulkContinue() {
+    if (!bulkFile) return
+    setBulkError('')
+    setBulkUploading(true)
+    try {
+      const text = await bulkFile.text()
+      const rows = parseBulkPriceListCsv(text)
+
+      if (rows.length === 0) {
+        setBulkError('No valid rows found. Expect columns: sku, price, price_list_slug.')
+        return
+      }
+
+      const result = await priceListsApi.bulkImport(rows)
+      setUploadMessage(
+        `Bulk upload complete: ${result.priceListsCreated} price list(s) created, ` +
+          `${result.priceListsUpdated} updated, ${result.itemsUpdated} price(s) set.`,
+      )
+      closeBulkModal()
+      refresh()
+    } catch (err) {
+      setBulkError(err.response?.data?.message || 'Bulk upload failed')
+    } finally {
+      setBulkUploading(false)
+    }
+  }
+
   return (
     <div>
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-gray-900">Price Lists</h1>
-        <Link
-          to="/price-lists/create"
-          className="rounded-md bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700"
-        >
-          Create price list
-        </Link>
+        <div>
+          <h1 className="text-2xl font-semibold text-gray-900">Price Lists</h1>
+          <p className="mt-1 text-sm text-gray-500">
+            Price lists let you customize your specific B2B pricing.
+          </p>
+        </div>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={openBulkModal}
+            className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+          >
+            Bulk upload
+          </button>
+          <Link
+            to="/price-lists/create"
+            className="rounded-md bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700"
+          >
+            Create price list
+          </Link>
+        </div>
       </div>
+
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".csv"
+        onChange={handleFileSelected}
+        className="hidden"
+      />
+
+      {uploadMessage && <p className="mb-4 text-sm text-green-600">{uploadMessage}</p>}
+      {uploadError && <p className="mb-4 text-sm text-red-600">{uploadError}</p>}
 
       <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
         <table className="w-full text-left text-sm">
           <thead className="border-b border-gray-200 bg-gray-50 text-gray-500">
             <tr>
               <th className="px-4 py-3 font-medium">Name</th>
-              <th className="px-4 py-3 font-medium">Status</th>
-              <th className="px-4 py-3 font-medium">Products</th>
-              <th className="px-4 py-3 font-medium">Customers</th>
+              <th className="px-4 py-3 font-medium">Currency</th>
+              <th className="px-4 py-3 font-medium">Type</th>
               <th className="px-4 py-3"></th>
             </tr>
           </thead>
@@ -50,33 +370,37 @@ export default function PriceListsPage() {
                   >
                     {pl.name}
                   </Link>
+                  {pl.handle && <div className="text-xs text-gray-400">Handle: {pl.handle}</div>}
                 </td>
                 <td className="px-4 py-3">
-                  <span
-                    className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-                      pl.status === 'active'
-                        ? 'bg-green-100 text-green-700'
-                        : 'bg-gray-100 text-gray-600'
-                    }`}
-                  >
-                    {pl.status}
+                  <span className="rounded border border-gray-200 px-2 py-0.5 text-xs font-medium text-gray-600">
+                    {pl.currency || 'USD'}
                   </span>
                 </td>
-                <td className="px-4 py-3 text-gray-500">{pl.itemCount}</td>
-                <td className="px-4 py-3 text-gray-500">{pl.customerCount}</td>
-                <td className="px-4 py-3 text-right">
-                  <button
-                    onClick={() => handleDelete(pl._id)}
-                    className="text-red-600 hover:underline"
-                  >
-                    Delete
-                  </button>
+                <td className="px-4 py-3">
+                  <TypeBadge pricingType={pl.pricingType || 'manual'} itemCount={pl.itemCount} />
+                </td>
+                <td className="px-4 py-3">
+                  <div className="flex items-center justify-end gap-2">
+                    <button
+                      onClick={() => triggerUpload(pl)}
+                      className="rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
+                    >
+                      Upload
+                    </button>
+                    <RowMenu
+                      onDownload={() => handleDownload(pl)}
+                      onEdit={() => navigate(`/price-lists/${pl._id}`)}
+                      onClear={() => handleClear(pl)}
+                      onDelete={() => handleDelete(pl._id)}
+                    />
+                  </div>
                 </td>
               </tr>
             ))}
             {priceLists.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-gray-400">
+                <td colSpan={4} className="px-4 py-8 text-center text-gray-400">
                   No price lists yet.
                 </td>
               </tr>
@@ -84,6 +408,91 @@ export default function PriceListsPage() {
           </tbody>
         </table>
       </div>
+
+      {bulkModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+          <div className="w-full max-w-lg rounded-xl bg-white p-6 shadow-lg">
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-gray-900">Bulk import pricing data by CSV</h2>
+              <button onClick={closeBulkModal} className="text-gray-400 hover:text-gray-600">
+                ✕
+              </button>
+            </div>
+
+            <p className="text-sm text-gray-600">
+              To get started, you'll need to set up the following columns in your CSV file.
+            </p>
+
+            <div className="mt-3 overflow-hidden rounded-lg border border-gray-200">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-gray-50 text-gray-500">
+                  <tr>
+                    <th className="px-3 py-2 font-medium">SKU</th>
+                    <th className="px-3 py-2 font-medium">PRICE</th>
+                    <th className="px-3 py-2 font-medium">PRICE_LIST_SLUG</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100 text-gray-700">
+                  <tr>
+                    <td className="px-3 py-2">abc-01</td>
+                    <td className="px-3 py-2">9.99</td>
+                    <td className="px-3 py-2">base</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2">abc-02</td>
+                    <td className="px-3 py-2">19.99</td>
+                    <td className="px-3 py-2">vip</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <button
+              onClick={handleDownloadTemplate}
+              className="mt-3 text-sm font-medium text-purple-600 hover:underline"
+            >
+              ↓ Download CSV template
+            </button>
+
+            <p className="mt-3 text-xs text-gray-400">
+              A price list is matched by its handle (slug) — if no price list with that handle
+              exists yet, one will be created automatically.
+            </p>
+
+            <div
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={handleBulkDrop}
+              className="mt-4 flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-gray-300 px-4 py-8 text-center"
+            >
+              <label className="cursor-pointer rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
+                Add File
+                <input type="file" accept=".csv" onChange={handleBulkFileChosen} className="hidden" />
+              </label>
+              <p className="text-xs text-gray-400">
+                {bulkFile ? bulkFile.name : 'Upload a CSV file or drag a file here.'}
+              </p>
+            </div>
+
+            {bulkError && <p className="mt-3 text-sm text-red-600">{bulkError}</p>}
+
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                onClick={closeBulkModal}
+                className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleBulkContinue}
+                disabled={!bulkFile || bulkUploading}
+                className="rounded-md bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700 disabled:opacity-50"
+              >
+                {bulkUploading ? 'Uploading…' : 'Continue'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

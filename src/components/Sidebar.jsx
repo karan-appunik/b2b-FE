@@ -1,12 +1,24 @@
 import { useEffect, useRef, useState } from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
-const links = [
+const topLinks = [
   { to: '/', label: 'Dashboard', end: true },
   { to: '/products', label: 'Products' },
-  { to: '/customers', label: 'Customers' },
-  { to: '/price-lists', label: 'Price Lists' },
+]
+
+const navGroups = [
+  {
+    label: 'Pricing',
+    links: [{ to: '/price-lists', label: 'Price lists' }],
+  },
+  {
+    label: 'Customers',
+    links: [
+      { to: '/customers', label: 'Customers', end: true },
+      { to: '/customers/groups', label: 'Groups' },
+    ],
+  },
 ]
 
 function getInitials(user) {
@@ -15,6 +27,67 @@ function getInitials(user) {
     return (parts[0][0] + (parts[1]?.[0] || '')).toUpperCase()
   }
   return user?.email?.[0]?.toUpperCase() || '?'
+}
+
+function ChevronIcon({ open }) {
+  return (
+    <svg
+      className={`h-3.5 w-3.5 shrink-0 text-gray-400 transition-transform ${open ? 'rotate-180' : ''}`}
+      viewBox="0 0 20 20"
+      fill="currentColor"
+    >
+      <path
+        fillRule="evenodd"
+        d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+        clipRule="evenodd"
+      />
+    </svg>
+  )
+}
+
+function NavGroup({ group }) {
+  const location = useLocation()
+  const hasActiveChild = group.links.some((l) =>
+    l.end ? location.pathname === l.to : location.pathname.startsWith(l.to),
+  )
+  const [open, setOpen] = useState(hasActiveChild)
+
+  useEffect(() => {
+    if (hasActiveChild) setOpen(true)
+  }, [hasActiveChild])
+
+  return (
+    <li>
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className="flex w-full cursor-pointer items-center justify-between rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+      >
+        {group.label}
+        <ChevronIcon open={open} />
+      </button>
+      {open && (
+        <ul className="mt-1 space-y-1 border-l border-gray-200 pl-3">
+          {group.links.map((link) => (
+            <li key={link.to}>
+              <NavLink
+                to={link.to}
+                end={link.end}
+                className={({ isActive }) =>
+                  `block rounded-md px-3 py-1.5 text-sm font-medium ${
+                    isActive
+                      ? 'bg-purple-50 text-purple-700'
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                  }`
+                }
+              >
+                {link.label}
+              </NavLink>
+            </li>
+          ))}
+        </ul>
+      )}
+    </li>
+  )
 }
 
 function UserMenu() {
@@ -33,7 +106,7 @@ function UserMenu() {
   }, [])
 
   return (
-    <div ref={ref} className="relative mt-auto border-t border-gray-200 pt-3">
+    <div ref={ref} className="relative">
       {open && (
         <div className="absolute bottom-full left-0 right-0 mb-2 overflow-hidden rounded-lg border border-gray-200 bg-white py-1 shadow-lg">
           <button
@@ -91,28 +164,35 @@ function UserMenu() {
 
 export default function Sidebar() {
   return (
-    <nav className="flex w-56 shrink-0 flex-col border-r border-gray-200 bg-white p-4">
-      <div className="mb-6 px-2 text-lg font-semibold text-gray-900">SparkLayer</div>
-      <ul className="space-y-1">
-        {links.map((link) => (
-          <li key={link.to}>
-            <NavLink
-              to={link.to}
-              end={link.end}
-              className={({ isActive }) =>
-                `block rounded-md px-3 py-2 text-sm font-medium ${
-                  isActive
-                    ? 'bg-purple-50 text-purple-700'
-                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                }`
-              }
-            >
-              {link.label}
-            </NavLink>
-          </li>
-        ))}
-      </ul>
-      <UserMenu />
+    <nav className="sticky top-0 flex h-screen w-56 shrink-0 flex-col border-r border-gray-200 bg-white">
+      <div className="flex-1 overflow-y-auto p-4">
+        <div className="mb-6 px-2 text-lg font-semibold text-gray-900">SparkLayer</div>
+        <ul className="space-y-1">
+          {topLinks.map((link) => (
+            <li key={link.to}>
+              <NavLink
+                to={link.to}
+                end={link.end}
+                className={({ isActive }) =>
+                  `block rounded-md px-3 py-2 text-sm font-medium ${
+                    isActive
+                      ? 'bg-purple-50 text-purple-700'
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                  }`
+                }
+              >
+                {link.label}
+              </NavLink>
+            </li>
+          ))}
+          {navGroups.map((group) => (
+            <NavGroup key={group.label} group={group} />
+          ))}
+        </ul>
+      </div>
+      <div className="shrink-0 border-t border-gray-200 p-4">
+        <UserMenu />
+      </div>
     </nav>
   )
 }

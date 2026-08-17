@@ -2,35 +2,9 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import * as priceListsApi from '../../api/priceLists.api'
 import * as productsApi from '../../api/products.api'
+import { parseCsv, slugify } from '../../utils/csv'
 
 const CURRENCIES = ['USD', 'EUR', 'GBP', 'INR', 'CAD', 'AUD']
-
-function slugify(value) {
-  return value
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)/g, '')
-}
-
-function parseCsv(text) {
-  const lines = text.split(/\r?\n/).map((l) => l.trim()).filter(Boolean)
-  if (lines.length === 0) return []
-
-  const header = lines[0].split(',').map((h) => h.trim().toLowerCase())
-  const skuIdx = header.indexOf('sku')
-  const priceIdx = header.indexOf('price')
-  const startIdx = skuIdx !== -1 && priceIdx !== -1 ? 1 : 0
-
-  const rows = []
-  for (let i = startIdx; i < lines.length; i++) {
-    const cols = lines[i].split(',').map((c) => c.trim())
-    const sku = skuIdx !== -1 ? cols[skuIdx] : cols[0]
-    const price = Number(priceIdx !== -1 ? cols[priceIdx] : cols[1])
-    if (sku && !Number.isNaN(price)) rows.push({ sku, price })
-  }
-  return rows
-}
 
 export default function PriceListCreatePage() {
   const navigate = useNavigate()
@@ -107,7 +81,7 @@ export default function PriceListCreatePage() {
         }
       }
 
-      navigate(`/price-lists/${priceList._id}`)
+      navigate('/price-lists')
     } catch (err) {
       setError(err.response?.data?.message || 'Could not create price list')
     } finally {

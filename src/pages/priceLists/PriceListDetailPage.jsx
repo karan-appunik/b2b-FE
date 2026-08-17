@@ -1,94 +1,47 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import * as priceListsApi from '../../api/priceLists.api'
-import * as productsApi from '../../api/products.api'
-import * as customersApi from '../../api/customers.api'
 
 export default function PriceListDetailPage() {
   const { id } = useParams()
   const navigate = useNavigate()
 
   const [priceList, setPriceList] = useState(null)
-  const [products, setProducts] = useState([])
-  const [customers, setCustomers] = useState([])
-  const [priceMap, setPriceMap] = useState({})
-  const [selectedCustomerIds, setSelectedCustomerIds] = useState(new Set())
-  const [meta, setMeta] = useState({ name: '', description: '', status: 'draft' })
-  const [savingItems, setSavingItems] = useState(false)
-  const [savingCustomers, setSavingCustomers] = useState(false)
-  const [savingMeta, setSavingMeta] = useState(false)
+  const [meta, setMeta] = useState({
+    name: '',
+    description: '',
+    status: 'draft',
+    pricingType: 'manual',
+    automaticPricing: { discountType: 'percentage', discountValue: 0 },
+  })
+  const [savingAll, setSavingAll] = useState(false)
   const [message, setMessage] = useState('')
 
   function loadAll() {
-    Promise.all([priceListsApi.get(id), productsApi.list(), customersApi.list()]).then(
-      ([pl, allProducts, allCustomers]) => {
-        setPriceList(pl)
-        setProducts(allProducts)
-        setCustomers(allCustomers)
-        setMeta({ name: pl.name, description: pl.description || '', status: pl.status })
-
-        const seededPrices = {}
-        pl.items.forEach((item) => {
-          seededPrices[item.product._id] = String(item.price)
-        })
-        setPriceMap(seededPrices)
-
-        setSelectedCustomerIds(new Set(pl.customers.map((c) => c._id)))
-      },
-    )
+    priceListsApi.get(id).then((pl) => {
+      setPriceList(pl)
+      setMeta({
+        name: pl.name,
+        description: pl.description || '',
+        status: pl.status,
+        pricingType: pl.pricingType || 'manual',
+        automaticPricing: pl.automaticPricing || { discountType: 'percentage', discountValue: 0 },
+      })
+    })
   }
 
   useEffect(loadAll, [id])
 
-  async function handleSaveMeta(e) {
+  async function handleUpdate(e) {
     e.preventDefault()
-    setSavingMeta(true)
+    setSavingAll(true)
     setMessage('')
     try {
       await priceListsApi.update(id, meta)
-      setMessage('Details saved.')
+      setMessage('Price list updated.')
       loadAll()
     } finally {
-      setSavingMeta(false)
-    }
-  }
-
-  async function handleSaveItems() {
-    setSavingItems(true)
-    setMessage('')
-    try {
-      const items = Object.entries(priceMap)
-        .filter(([, v]) => v !== '')
-        .map(([product, price]) => ({ product, price: Number(price) }))
-      await priceListsApi.saveItems(id, items)
-      setMessage('Prices saved.')
-      loadAll()
-    } finally {
-      setSavingItems(false)
-    }
-  }
-
-  function toggleCustomer(customerId) {
-    setSelectedCustomerIds((prev) => {
-      const next = new Set(prev)
-      if (next.has(customerId)) {
-        next.delete(customerId)
-      } else {
-        next.add(customerId)
-      }
-      return next
-    })
-  }
-
-  async function handleSaveCustomers() {
-    setSavingCustomers(true)
-    setMessage('')
-    try {
-      await priceListsApi.assignCustomers(id, [...selectedCustomerIds])
-      setMessage('Customer assignment saved.')
-      loadAll()
-    } finally {
-      setSavingCustomers(false)
+      setSavingAll(false)
     }
   }
 
@@ -103,168 +56,177 @@ export default function PriceListDetailPage() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="mx-auto max-w-3xl">
       <div className="flex items-center justify-between">
         <div>
           <Link to="/price-lists" className="text-sm text-purple-600 hover:underline">
             ← Price Lists
           </Link>
           <h1 className="mt-1 text-2xl font-semibold text-gray-900">{priceList.name}</h1>
+          <p className="mt-1 text-sm text-gray-500">
+            Choose how you want your pricing to work with automatic and manual pricing.
+          </p>
         </div>
         <button onClick={handleDelete} className="text-sm text-red-600 hover:underline">
           Delete price list
         </button>
       </div>
 
-      {message && <p className="text-sm text-green-600">{message}</p>}
+      {priceList.pricingType === 'manual' && priceList.shopifyPushedAt && (
+        <p className="mt-4 text-xs text-gray-500">
+          Last synced to Shopify: {new Date(priceList.shopifyPushedAt).toLocaleString()}
+        </p>
+      )}
+      {priceList.shopifyPushError && (
+        <p className="mt-2 text-sm text-red-600">Last Shopify sync failed: {priceList.shopifyPushError}</p>
+      )}
 
-      {/* Details */}
-      <section className="rounded-xl border border-gray-200 bg-white p-6">
-        <h2 className="mb-4 text-lg font-semibold text-gray-900">Details</h2>
-        <form onSubmit={handleSaveMeta} className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">Name</label>
+      {message && <p className="mt-4 text-sm text-green-600">{message}</p>}
+
+      <form onSubmit={handleUpdate} className="mt-6 space-y-6">
+        {/* Details */}
+        <section className="rounded-xl border border-gray-200 bg-white p-6">
+          <h2 className="mb-4 text-lg font-semibold text-gray-900">Details</h2>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <label className="mb-1 block text-sm font-medium text-gray-700">Name</label>
+              <input
+                required
+                value={meta.name}
+                onChange={(e) => setMeta({ ...meta, name: e.target.value })}
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none"
+              />
+            </div>
+            <div>
+              <label className="mb-1 block text-sm font-medium text-gray-700">Handle (or ID)</label>
+              <input
+                disabled
+                value={priceList.handle}
+                className="w-full rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-500"
+              />
+            </div>
+          </div>
+          <div className="mt-4">
+            <label className="mb-1 block text-sm font-medium text-gray-700">Currency</label>
             <input
-              required
-              value={meta.name}
-              onChange={(e) => setMeta({ ...meta, name: e.target.value })}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none"
+              disabled
+              value={priceList.currency}
+              className="w-full rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-500 sm:w-1/2"
             />
           </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">Description</label>
+          <p className="mt-3 text-xs text-gray-400">
+            The price list handle and currency cannot be changed once a price list has been created.
+          </p>
+        </section>
+
+        {/* Automatic pricing */}
+        <section className="rounded-xl border border-gray-200 bg-white p-6">
+          <h2 className="text-lg font-semibold text-gray-900">Automatic pricing</h2>
+          <p className="mb-3 mt-1 text-sm text-gray-500">
+            Use another pricing source and apply a discount.
+          </p>
+          <label className="flex items-center gap-2 text-sm text-gray-700">
             <input
-              value={meta.description}
-              onChange={(e) => setMeta({ ...meta, description: e.target.value })}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none"
+              type="checkbox"
+              checked={meta.pricingType === 'automatic'}
+              onChange={(e) =>
+                setMeta({ ...meta, pricingType: e.target.checked ? 'automatic' : 'manual' })
+              }
+              className="h-4 w-4 rounded border-gray-300 text-purple-600 focus:ring-purple-500"
             />
-          </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">Status</label>
-            <select
-              value={meta.status}
-              onChange={(e) => setMeta({ ...meta, status: e.target.value })}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none"
-            >
-              <option value="draft">Draft</option>
-              <option value="active">Active</option>
-            </select>
-          </div>
-          <div className="sm:col-span-3">
-            <button
-              type="submit"
-              disabled={savingMeta}
-              className="rounded-md bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700 disabled:opacity-50"
-            >
-              {savingMeta ? 'Saving…' : 'Save details'}
-            </button>
-          </div>
-        </form>
-      </section>
+            Enable automatic pricing
+          </label>
 
-      {/* Manual Price Editor */}
-      <section className="rounded-xl border border-gray-200 bg-white p-6">
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-900">Manual Price Editor</h2>
-          <button
-            onClick={handleSaveItems}
-            disabled={savingItems}
-            className="rounded-md bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700 disabled:opacity-50"
-          >
-            {savingItems ? 'Saving…' : 'Save prices'}
-          </button>
-        </div>
-        <p className="mb-4 text-sm text-gray-500">
-          Leave a price blank to exclude that product from this price list.
-        </p>
-        <div className="overflow-hidden rounded-lg border border-gray-200">
-          <table className="w-full text-left text-sm">
-            <thead className="border-b border-gray-200 bg-gray-50 text-gray-500">
-              <tr>
-                <th className="px-4 py-2 font-medium">Product</th>
-                <th className="px-4 py-2 font-medium">SKU</th>
-                <th className="px-4 py-2 font-medium">MSRP</th>
-                <th className="px-4 py-2 font-medium">Wholesale price</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {products.map((p) => (
-                <tr key={p._id}>
-                  <td className="px-4 py-2 text-gray-900">{p.name}</td>
-                  <td className="px-4 py-2 text-gray-500">{p.sku}</td>
-                  <td className="px-4 py-2 text-gray-500">${p.msrp.toFixed(2)}</td>
-                  <td className="px-4 py-2">
-                    <input
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      placeholder="—"
-                      value={priceMap[p._id] ?? ''}
-                      onChange={(e) =>
-                        setPriceMap({ ...priceMap, [p._id]: e.target.value })
-                      }
-                      className="w-28 rounded-md border border-gray-300 px-2 py-1 text-sm focus:border-purple-500 focus:outline-none"
-                    />
-                  </td>
-                </tr>
-              ))}
-              {products.length === 0 && (
-                <tr>
-                  <td colSpan={4} className="px-4 py-6 text-center text-gray-400">
-                    No products yet — add products first.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      {/* Customer assignment */}
-      <section className="rounded-xl border border-gray-200 bg-white p-6">
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-900">Customer-specific Wholesale Pricing</h2>
-          <button
-            onClick={handleSaveCustomers}
-            disabled={savingCustomers}
-            className="rounded-md bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700 disabled:opacity-50"
-          >
-            {savingCustomers ? 'Saving…' : 'Save assignment'}
-          </button>
-        </div>
-        <p className="mb-4 text-sm text-gray-500">
-          Select which customers should see this price list's prices.
-        </p>
-        <div className="divide-y divide-gray-100 rounded-lg border border-gray-200">
-          {customers.map((c) => {
-            const isOnOtherList = c.priceList && c.priceList._id !== id
-            return (
-              <label key={c._id} className="flex items-center justify-between px-4 py-3 text-sm">
-                <span className="flex items-center gap-3">
-                  <input
-                    type="checkbox"
-                    checked={selectedCustomerIds.has(c._id)}
-                    onChange={() => toggleCustomer(c._id)}
-                    className="h-4 w-4 rounded border-gray-300 text-purple-600 focus:ring-purple-500"
-                  />
-                  <span className="text-gray-900">{c.name}</span>
-                  <span className="text-gray-400">{c.email}</span>
-                </span>
-                {isOnOtherList && (
-                  <span className="text-xs text-amber-600">
-                    currently on: {c.priceList.name}
-                  </span>
-                )}
-              </label>
-            )
-          })}
-          {customers.length === 0 && (
-            <p className="px-4 py-6 text-center text-gray-400">
-              No customers yet — add customers first.
-            </p>
+          {meta.pricingType === 'automatic' && (
+            <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700">Discount type</label>
+                <select
+                  value={meta.automaticPricing.discountType}
+                  onChange={(e) =>
+                    setMeta({
+                      ...meta,
+                      automaticPricing: { ...meta.automaticPricing, discountType: e.target.value },
+                    })
+                  }
+                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none"
+                >
+                  <option value="percentage">Percentage off</option>
+                  <option value="fixed">Fixed amount off</option>
+                </select>
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700">Discount value</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={meta.automaticPricing.discountValue}
+                  onChange={(e) =>
+                    setMeta({
+                      ...meta,
+                      automaticPricing: {
+                        ...meta.automaticPricing,
+                        discountValue: Number(e.target.value),
+                      },
+                    })
+                  }
+                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none"
+                />
+              </div>
+            </div>
           )}
+        </section>
+
+        {/* Manual pricing */}
+        <section className="rounded-xl border border-gray-200 bg-white p-6">
+          <h2 className="text-lg font-semibold text-gray-900">Manual pricing</h2>
+          <p className="mb-4 mt-1 text-sm text-gray-500">
+            Set specific prices for each product by uploading a CSV file.
+          </p>
+          <div className="flex items-start gap-2 rounded-md border border-blue-100 bg-blue-50 px-3 py-2 text-sm text-blue-700">
+            <svg className="mt-0.5 h-4 w-4 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+              <path
+                fillRule="evenodd"
+                d="M18 10A8 8 0 112 10a8 8 0 0116 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9zm1-4a1 1 0 100 2 1 1 0 000-2z"
+                clipRule="evenodd"
+              />
+            </svg>
+            Manual pricing is managed by uploading a CSV file on the price lists page.
+          </div>
+        </section>
+
+        {/* Customer assignment */}
+        <section className="rounded-xl border border-gray-200 bg-white p-6">
+          <h2 className="text-lg font-semibold text-gray-900">Customers</h2>
+          <p className="mb-4 mt-1 text-sm text-gray-500">
+            Customers are assigned to this price list through Customer Groups, based on their
+            Shopify tag.
+          </p>
+          <Link
+            to="/customers/groups"
+            className="inline-flex items-center gap-1 text-sm font-medium text-purple-600 hover:underline"
+          >
+            Manage customer groups →
+          </Link>
+        </section>
+
+        <div className="flex justify-end gap-3">
+          <Link
+            to="/price-lists"
+            className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+          >
+            Cancel
+          </Link>
+          <button
+            type="submit"
+            disabled={savingAll}
+            className="rounded-md bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700 disabled:opacity-50"
+          >
+            {savingAll ? 'Updating…' : 'Update price list'}
+          </button>
         </div>
-      </section>
+      </form>
     </div>
   )
 }

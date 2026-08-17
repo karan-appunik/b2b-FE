@@ -6,6 +6,10 @@ import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
 import ProductsPage from './pages/products/ProductsPage'
 import CustomersPage from './pages/customers/CustomersPage'
+import CustomerDetailPage from './pages/customers/CustomerDetailPage'
+import CustomerGroupsPage from './pages/customerGroups/CustomerGroupsPage'
+import CustomerGroupCreatePage from './pages/customerGroups/CustomerGroupCreatePage'
+import CustomerGroupDetailPage from './pages/customerGroups/CustomerGroupDetailPage'
 import PriceListsPage from './pages/priceLists/PriceListsPage'
 import PriceListCreatePage from './pages/priceLists/PriceListCreatePage'
 import PriceListDetailPage from './pages/priceLists/PriceListDetailPage'
@@ -21,6 +25,10 @@ function App() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/customers" element={<CustomersPage />} />
+          <Route path="/customers/:id" element={<CustomerDetailPage />} />
+          <Route path="/customers/groups" element={<CustomerGroupsPage />} />
+          <Route path="/customers/groups/create" element={<CustomerGroupCreatePage />} />
+          <Route path="/customers/groups/:id" element={<CustomerGroupDetailPage />} />
           <Route path="/price-lists" element={<PriceListsPage />} />
           <Route path="/price-lists/create" element={<PriceListCreatePage />} />
           <Route path="/price-lists/:id" element={<PriceListDetailPage />} />
