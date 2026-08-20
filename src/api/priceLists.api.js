@@ -9,3 +9,7 @@ export const saveItems = (id, items) =>
   client.put(`/api/price-lists/${id}/items`, { items }).then((r) => r.data)
 export const assignCustomers = (id, customerIds) =>
   client.put(`/api/price-lists/${id}/customers`, { customerIds }).then((r) => r.data)
+export const pushToShopify = (id) =>
+  client.post(`/api/price-lists/${id}/push-to-shopify`).then((r) => r.data)
+export const bulkImport = (rows) =>
+  client.post('/api/price-lists/bulk', { rows }).then((r) => r.data)
