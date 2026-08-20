@@ -21,9 +21,11 @@ export default function PriceListCreatePage() {
   const [manualEnabled, setManualEnabled] = useState(false)
   const [csvFile, setCsvFile] = useState(null)
   const [csvRowCount, setCsvRowCount] = useState(null)
+  const [csvInvalidCount, setCsvInvalidCount] = useState(0)
 
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
+  const [importWarning, setImportWarning] = useState('')
 
   function handleNameChange(value) {
     setName(value)
@@ -39,14 +41,18 @@ export default function PriceListCreatePage() {
     const file = e.target.files?.[0] || null
     setCsvFile(file)
     setCsvRowCount(null)
+    setCsvInvalidCount(0)
     if (!file) return
     const text = await file.text()
-    setCsvRowCount(parseCsv(text).length)
+    const { rows, invalidCount } = parseCsv(text)
+    setCsvRowCount(rows.length)
+    setCsvInvalidCount(invalidCount)
   }
 
   async function handleSubmit(e) {
     e.preventDefault()
     setError('')
+    setImportWarning('')
 
     if (!name.trim()) {
       setError('Name is required.')
@@ -68,15 +74,34 @@ export default function PriceListCreatePage() {
 
       if (manualEnabled && csvFile) {
         const text = await csvFile.text()
-        const rows = parseCsv(text)
+        const { rows, invalidCount } = parseCsv(text)
         if (rows.length > 0) {
-          const products = await productsApi.list()
-          const bySku = new Map(products.map((p) => [p.sku, p._id]))
-          const items = rows
-            .filter((row) => bySku.has(row.sku))
-            .map((row) => ({ product: bySku.get(row.sku), price: row.price }))
-          if (items.length > 0) {
-            await priceListsApi.saveItems(priceList._id, items)
+          try {
+            const products = await productsApi.list()
+            const bySku = new Map(products.map((p) => [p.sku, p._id]))
+            const items = rows
+              .filter((row) => bySku.has(row.sku))
+              .map((row) => ({ product: bySku.get(row.sku), price: row.price }))
+            const unmatchedSkus = rows.filter((row) => !bySku.has(row.sku)).map((row) => row.sku)
+
+            if (items.length > 0) {
+              await priceListsApi.saveItems(priceList._id, items)
+            }
+
+            if (unmatchedSkus.length > 0 || invalidCount > 0) {
+              const parts = [`Price list created. ${items.length} of ${rows.length} priced row(s) imported.`]
+              if (unmatchedSkus.length > 0) {
+                parts.push(`${unmatchedSkus.length} row(s) skipped — SKU not found: ${unmatchedSkus.join(', ')}.`)
+              }
+              if (invalidCount > 0) {
+                parts.push(`${invalidCount} row(s) skipped — missing SKU or invalid price.`)
+              }
+              setImportWarning(parts.join(' '))
+              return
+            }
+          } catch (importErr) {
+            await priceListsApi.remove(priceList._id).catch(() => {})
+            throw importErr
           }
         }
       }
@@ -219,6 +244,8 @@ export default function PriceListCreatePage() {
               {csvRowCount !== null && (
                 <p className="mt-2 text-xs text-gray-500">
                   {csvRowCount} price {csvRowCount === 1 ? 'row' : 'rows'} found in file.
+                  {csvInvalidCount > 0 &&
+                    ` ${csvInvalidCount} row(s) skipped — missing SKU or invalid price.`}
                 </p>
               )}
               <p className="mt-2 text-xs text-gray-400">
@@ -229,6 +256,14 @@ export default function PriceListCreatePage() {
         </section>
 
         {error && <p className="text-sm text-red-600">{error}</p>}
+        {importWarning && (
+          <div className="rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
+            <p>{importWarning}</p>
+            <Link to="/price-lists" className="mt-2 inline-block font-medium underline">
+              Continue to price lists
+            </Link>
+          </div>
+        )}
 
         <div className="flex justify-end gap-3">
           <Link

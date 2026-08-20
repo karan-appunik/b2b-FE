@@ -51,7 +51,7 @@ export default function ProductsPage() {
     setImportError('')
     try {
       const text = await file.text()
-      const rows = parseProductsCsv(text)
+      const { rows, invalidCount } = parseProductsCsv(text)
 
       if (rows.length === 0) {
         setImportError('No valid rows found. Expect columns: sku, name, msrp.')
@@ -59,7 +59,11 @@ export default function ProductsPage() {
       }
 
       const result = await productsApi.bulkImport(rows)
-      setImportMessage(`Imported ${result.imported} products (${result.created} created, ${result.updated} updated).`)
+      const parts = [
+        `Imported ${result.imported} products (${result.created} created, ${result.updated} updated).`,
+      ]
+      if (invalidCount > 0) parts.push(`${invalidCount} row(s) skipped — missing data or invalid MSRP.`)
+      setImportMessage(parts.join(' '))
       refresh()
     } catch (err) {
       setImportError(err.response?.data?.message || 'Import failed')

@@ -26,6 +26,53 @@ function TrashIcon({ className }) {
   )
 }
 
+function PlusCircleIcon({ className }) {
+  return (
+    <svg className={className} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <circle cx="10" cy="10" r="7.25" />
+      <path d="M10 7v6M7 10h6" strokeLinecap="round" />
+    </svg>
+  )
+}
+
+function ExpandIcon({ className }) {
+  return (
+    <svg className={className} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <path d="M7.5 3.5h-3a1 1 0 0 0-1 1v3M12.5 3.5h3a1 1 0 0 1 1 1v3M7.5 16.5h-3a1 1 0 0 1-1-1v-3M12.5 16.5h3a1 1 0 0 0 1-1v-3" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
+
+const STEPS = ['My Cart', 'Shipping', 'Review & Pay', 'Complete']
+
+function CartSteps({ current = 0 }) {
+  return (
+    <div className="flex items-center justify-center gap-2 px-6 py-5">
+      {STEPS.map((label, i) => (
+        <div key={label} className="flex items-center">
+          {i > 0 && <div className="mx-2 h-px w-10 bg-gray-200 sm:w-16" />}
+          <div className="flex flex-col items-center gap-1.5">
+            <div
+              className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold ${
+                i === current
+                  ? 'bg-gray-900 text-white'
+                  : i < current
+                    ? 'border border-gray-900 text-gray-900'
+                    : 'border border-gray-300 text-gray-400'
+              }`}
+            >
+              {i + 1}
+            </div>
+            <span className={`text-xs ${i === current ? 'font-semibold text-gray-900' : 'text-gray-400'}`}>
+              {label}
+            </span>
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 export default function CartDrawer({ open, onClose, items, onQtyChange, onRemove, catalog = [], onAddBySku }) {
   const [search, setSearch] = useState('')
 
@@ -70,16 +117,23 @@ export default function CartDrawer({ open, onClose, items, onQtyChange, onRemove
           </button>
         </div>
 
-        <div className="flex items-center justify-between px-6 pt-5">
+        <CartSteps current={0} />
+
+        <div className="flex items-center justify-between border-t border-gray-100 px-6 pt-5">
           <h2 className="text-xl font-semibold text-gray-900">My Cart</h2>
+          <button className="flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-gray-700">
+            <ExpandIcon className="h-4 w-4" />
+            Expand
+          </button>
         </div>
 
         <div className="relative px-6 pt-4">
+          <PlusCircleIcon className="pointer-events-none absolute left-9 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Add products by SKU or Barcode"
-            className="w-full rounded-md border border-gray-300 px-3 py-2.5 text-sm focus:border-purple-500 focus:outline-none"
+            className="w-full rounded-md border border-gray-300 py-2.5 pl-10 pr-3 text-sm text-gray-500 placeholder:text-gray-400 focus:border-purple-500 focus:outline-none"
           />
           {suggestions.length > 0 && (
             <div className="absolute left-6 right-6 z-10 mt-1 overflow-hidden rounded-md border border-gray-200 bg-white shadow-lg">
@@ -145,7 +199,7 @@ export default function CartDrawer({ open, onClose, items, onQtyChange, onRemove
                     <p className="text-sm font-semibold text-gray-900">
                       ${(product.msrp * qty).toFixed(2)}
                     </p>
-                    <p className="mt-0.5 text-xs text-gray-500">${product.msrp.toFixed(2)} per unit</p>
+                    <p className="mt-0.5 text-xs text-gray-500">${product.msrp.toFixed(2)}/ea</p>
                   </div>
                 </div>
               ))}
@@ -153,8 +207,8 @@ export default function CartDrawer({ open, onClose, items, onQtyChange, onRemove
           )}
         </div>
 
-        <div className="border-t border-gray-200 bg-gray-50 px-6 py-5">
-          <div className="mb-4 flex items-center justify-between text-sm font-semibold text-gray-900">
+        <div className="border-t border-gray-200 px-6 py-5">
+          <div className="flex items-center justify-between text-sm font-semibold text-gray-900">
             <span>
               Sub-total{' '}
               <span className="font-normal text-gray-500">
@@ -164,16 +218,18 @@ export default function CartDrawer({ open, onClose, items, onQtyChange, onRemove
             <span>${subTotal.toFixed(2)}</span>
           </div>
 
+          <p className="mt-2 text-xs text-gray-400">
+            Tax and shipping costs calculated during checkout.
+          </p>
+
+          <div className="my-5 border-t border-gray-200" />
+
           <button
             disabled={items.length === 0}
             className="w-full rounded-md bg-gray-900 py-3.5 text-sm font-semibold text-white hover:bg-black disabled:cursor-not-allowed disabled:opacity-40"
           >
-            Proceed to Checkout
+            Proceed to checkout
           </button>
-
-          <p className="mt-3 text-center text-xs text-gray-400">
-            Tax and shipping costs calculated during checkout
-          </p>
         </div>
       </aside>
     </>

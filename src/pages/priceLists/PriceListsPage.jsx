@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom'
 import { Link, useNavigate } from 'react-router-dom'
 import * as priceListsApi from '../../api/priceLists.api'
 import * as productsApi from '../../api/products.api'
-import { parseCsv, parseBulkPriceListCsv } from '../../utils/csv'
+import { parseCsv, parseBulkPriceListCsv, stringifyCsv } from '../../utils/csv'
 
 function TypeBadge({ pricingType, itemCount }) {
   if (pricingType === 'automatic') {
@@ -196,8 +196,8 @@ export default function PriceListsPage() {
     setUploadError('')
     try {
       const full = await priceListsApi.get(pl._id)
-      const rows = full.items.map((item) => `${item.product.sku},${item.price}`)
-      const csv = ['sku,price', ...rows].join('\n')
+      const rows = full.items.map((item) => [item.product.sku, item.price])
+      const csv = stringifyCsv([['sku', 'price'], ...rows])
       const blob = new Blob([csv], { type: 'text/csv' })
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
@@ -232,12 +232,13 @@ export default function PriceListsPage() {
 
     try {
       const text = await file.text()
-      const rows = parseCsv(text)
+      const { rows, invalidCount } = parseCsv(text)
       const bySku = new Map(products.map((p) => [p.sku, p._id]))
       const items = rows.filter((row) => bySku.has(row.sku)).map((row) => ({
         product: bySku.get(row.sku),
         price: row.price,
       }))
+      const unmatchedCount = rows.length - items.length
 
       if (items.length === 0) {
         setUploadError(`No matching products found in "${priceList.name}" upload.`)
@@ -245,7 +246,10 @@ export default function PriceListsPage() {
       }
 
       await priceListsApi.saveItems(priceList._id, items)
-      setUploadMessage(`Updated ${items.length} price${items.length === 1 ? '' : 's'} in "${priceList.name}".`)
+      const parts = [`Updated ${items.length} price${items.length === 1 ? '' : 's'} in "${priceList.name}".`]
+      if (unmatchedCount > 0) parts.push(`${unmatchedCount} row(s) skipped — SKU not found.`)
+      if (invalidCount > 0) parts.push(`${invalidCount} row(s) skipped — missing SKU or invalid price.`)
+      setUploadMessage(parts.join(' '))
       refresh()
     } catch (err) {
       setUploadError(err.response?.data?.message || 'Upload failed')
@@ -277,7 +281,11 @@ export default function PriceListsPage() {
   }
 
   function handleDownloadTemplate() {
-    const csv = ['sku,price', 'SKU-1,12', 'SKU-2,15'].join('\n')
+    const csv = stringifyCsv([
+      ['sku', 'price'],
+      ['SKU-1', '12'],
+      ['SKU-2', '15'],
+    ])
     const blob = new Blob([csv], { type: 'text/csv' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
@@ -293,7 +301,7 @@ export default function PriceListsPage() {
     setBulkUploading(true)
     try {
       const text = await bulkFile.text()
-      const rows = parseBulkPriceListCsv(text)
+      const { rows, invalidCount } = parseBulkPriceListCsv(text)
 
       if (rows.length === 0) {
         setBulkError('No valid rows found. Expect columns: sku, price, price_list_slug.')
@@ -301,10 +309,12 @@ export default function PriceListsPage() {
       }
 
       const result = await priceListsApi.bulkImport(rows)
-      setUploadMessage(
+      const parts = [
         `Bulk upload complete: ${result.priceListsCreated} price list(s) created, ` +
           `${result.priceListsUpdated} updated, ${result.itemsUpdated} price(s) set.`,
-      )
+      ]
+      if (invalidCount > 0) parts.push(`${invalidCount} row(s) skipped — missing data or invalid price.`)
+      setUploadMessage(parts.join(' '))
       closeBulkModal()
       refresh()
     } catch (err) {
