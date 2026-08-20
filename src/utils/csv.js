@@ -113,8 +113,9 @@ export function parseCsv(text) {
   for (let i = startIdx; i < records.length; i++) {
     const cols = records[i]
     const sku = skuIdx !== -1 ? cols[skuIdx] : cols[0]
-    const price = Number(priceIdx !== -1 ? cols[priceIdx] : cols[1])
-    if (sku && !Number.isNaN(price)) {
+    const priceField = priceIdx !== -1 ? cols[priceIdx] : cols[1]
+    const price = Number(priceField)
+    if (sku && priceField !== '' && !Number.isNaN(price)) {
       rows.push({ sku, price })
     } else {
       invalidCount += 1
@@ -140,10 +141,11 @@ export function parseBulkPriceListCsv(text) {
   for (let i = startIdx; i < records.length; i++) {
     const cols = records[i]
     const sku = hasHeader ? cols[skuIdx] : cols[0]
-    const price = Number(hasHeader ? cols[priceIdx] : cols[1])
+    const priceField = hasHeader ? cols[priceIdx] : cols[1]
+    const price = Number(priceField)
     const priceListSlug = hasHeader ? cols[slugIdx] : cols[2]
     const currency = hasHeader && currencyIdx !== -1 ? cols[currencyIdx] : undefined
-    if (priceListSlug && sku && !Number.isNaN(price)) {
+    if (priceListSlug && sku && priceField !== '' && !Number.isNaN(price)) {
       rows.push({ priceListSlug, sku, price, currency })
     } else {
       invalidCount += 1
@@ -169,8 +171,9 @@ export function parseProductsCsv(text) {
     const cols = records[i]
     const sku = hasHeader ? cols[skuIdx] : cols[0]
     const name = hasHeader ? cols[nameIdx] : cols[1]
-    const msrp = Number(hasHeader ? cols[msrpIdx] : cols[2])
-    if (sku && name && !Number.isNaN(msrp)) {
+    const msrpField = hasHeader ? cols[msrpIdx] : cols[2]
+    const msrp = Number(msrpField)
+    if (sku && name && msrpField !== '' && !Number.isNaN(msrp)) {
       rows.push({ sku, name, msrp })
     } else {
       invalidCount += 1
