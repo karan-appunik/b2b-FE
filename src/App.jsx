@@ -13,6 +13,8 @@ import CustomerGroupDetailPage from './pages/customerGroups/CustomerGroupDetailP
 import PriceListsPage from './pages/priceLists/PriceListsPage'
 import PriceListCreatePage from './pages/priceLists/PriceListCreatePage'
 import PriceListDetailPage from './pages/priceLists/PriceListDetailPage'
+import PriceEditorPage from './pages/priceEditor/PriceEditorPage'
+import PriceEditorVariantPage from './pages/priceEditor/PriceEditorVariantPage'
 
 function App() {
   return (
@@ -32,6 +34,8 @@ function App() {
           <Route path="/price-lists" element={<PriceListsPage />} />
           <Route path="/price-lists/create" element={<PriceListCreatePage />} />
           <Route path="/price-lists/:id" element={<PriceListDetailPage />} />
+          <Route path="/price-editor" element={<PriceEditorPage />} />
+          <Route path="/price-editor/:id" element={<PriceEditorVariantPage />} />
         </Route>
       </Route>
 
