@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext'
 export default function Register() {
   const { register } = useAuth()
   const navigate = useNavigate()
-  const [form, setForm] = useState({ name: '', email: '', password: '' })
+  const [form, setForm] = useState({ name: '', email: '', password: '', shop: '' })
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
@@ -46,6 +46,16 @@ export default function Register() {
               required
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none"
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-sm font-medium text-gray-700">Shop</label>
+            <input
+              required
+              placeholder="your-store.myshopify.com"
+              value={form.shop}
+              onChange={(e) => setForm({ ...form, shop: e.target.value })}
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none"
             />
           </div>
