@@ -55,7 +55,6 @@ export default function CustomersPage() {
       </div>
 
       <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
-       <div className="overflow-x-auto">
         <table className="w-full text-left text-sm">
           <thead className="border-b border-gray-200 bg-gray-50 text-gray-500">
             <tr>
@@ -102,7 +101,6 @@ export default function CustomersPage() {
             )}
           </tbody>
         </table>
-       </div>
       </div>
     </div>
   )

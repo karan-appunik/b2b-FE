@@ -47,7 +47,7 @@ export default function CustomerGroupsPage() {
 
   return (
     <div>
-      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-gray-900">Customer Groups</h1>
           <p className="mt-1 text-sm text-gray-500">
@@ -81,19 +81,14 @@ export default function CustomerGroupsPage() {
           </div>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <div className="rounded-lg border border-gray-200 p-4">
-              <p className="mb-2 text-xs font-medium uppercase text-gray-400">Price lists</p>
-              {base.priceLists?.length ? (
-                <div className="flex flex-wrap gap-2">
-                  {base.priceLists.map((pl) => (
-                    <Link
-                      key={pl._id}
-                      to={`/price-lists/${pl._id}`}
-                      className="text-sm text-purple-600 hover:underline"
-                    >
-                      {pl.name}
-                    </Link>
-                  ))}
-                </div>
+              <p className="mb-2 text-xs font-medium uppercase text-gray-400">Price list</p>
+              {base.priceList ? (
+                <Link
+                  to={`/price-lists/${base.priceList._id}`}
+                  className="text-sm text-purple-600 hover:underline"
+                >
+                  {base.priceList.name}
+                </Link>
               ) : (
                 <span className="text-sm text-gray-400">None</span>
               )}
@@ -104,20 +99,14 @@ export default function CustomerGroupsPage() {
             </div>
             <div className="rounded-lg border border-gray-200 p-4">
               <p className="mb-2 text-xs font-medium uppercase text-gray-400">Order limits</p>
-              {base.orderLimits?.quantity?.min != null ||
-              base.orderLimits?.quantity?.max != null ||
-              base.orderLimits?.total?.length > 0 ? (
+              {base.orderLimits?.valueBased?.enabled || base.orderLimits?.unitBased?.enabled ? (
                 <div className="space-y-1 text-sm text-gray-700">
-                  {(base.orderLimits.quantity?.min != null || base.orderLimits.quantity?.max != null) && (
-                    <p>
-                      Quantity: {base.orderLimits.quantity.min ?? 'no min'} – {base.orderLimits.quantity.max ?? 'no max'}
-                    </p>
+                  {base.orderLimits.valueBased.enabled && (
+                    <p>Min value: ${base.orderLimits.valueBased.minValue}</p>
                   )}
-                  {base.orderLimits.total?.map((row) => (
-                    <p key={row.currency}>
-                      Total ({row.currency}): {row.min ?? 'no min'} – {row.max ?? 'no max'}
-                    </p>
-                  ))}
+                  {base.orderLimits.unitBased.enabled && (
+                    <p>Min units: {base.orderLimits.unitBased.minUnits}</p>
+                  )}
                 </div>
               ) : (
                 <span className="text-sm text-gray-400">None</span>
@@ -129,7 +118,6 @@ export default function CustomerGroupsPage() {
 
       <h2 className="mb-3 text-sm font-semibold text-gray-500">Additional customer groups</h2>
       <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
-       <div className="overflow-x-auto">
         <table className="w-full text-left text-sm">
           <thead className="border-b border-gray-200 bg-gray-50 text-gray-500">
             <tr>
@@ -157,17 +145,13 @@ export default function CustomerGroupsPage() {
                   </span>
                 </td>
                 <td className="px-4 py-3 text-gray-700">
-                  {g.priceLists?.length ? (
-                    <div className="flex flex-wrap gap-x-2">
-                      {g.priceLists.map((pl, i) => (
-                        <span key={pl._id}>
-                          <Link to={`/price-lists/${pl._id}`} className="text-purple-600 hover:underline">
-                            {pl.name}
-                          </Link>
-                          {i < g.priceLists.length - 1 && ','}
-                        </span>
-                      ))}
-                    </div>
+                  {g.priceList ? (
+                    <Link
+                      to={`/price-lists/${g.priceList._id}`}
+                      className="text-purple-600 hover:underline"
+                    >
+                      {g.priceList.name}
+                    </Link>
                   ) : (
                     <span className="text-gray-400">Inheriting</span>
                   )}
@@ -200,7 +184,6 @@ export default function CustomerGroupsPage() {
             )}
           </tbody>
         </table>
-       </div>
       </div>
     </div>
   )

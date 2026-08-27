@@ -4,11 +4,9 @@ import Layout from './components/Layout'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
-import Activity from './pages/Activity'
 import ProductsPage from './pages/products/ProductsPage'
 import CustomersPage from './pages/customers/CustomersPage'
 import CustomerDetailPage from './pages/customers/CustomerDetailPage'
-import AgentsPage from './pages/customers/AgentsPage'
 import CustomerGroupsPage from './pages/customerGroups/CustomerGroupsPage'
 import CustomerGroupCreatePage from './pages/customerGroups/CustomerGroupCreatePage'
 import CustomerGroupDetailPage from './pages/customerGroups/CustomerGroupDetailPage'
@@ -27,10 +25,8 @@ function App() {
       <Route element={<ProtectedRoute />}>
         <Route element={<Layout />}>
           <Route path="/" element={<Dashboard />} />
-          <Route path="/activity" element={<Activity />} />
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/customers" element={<CustomersPage />} />
-          <Route path="/customers/agents" element={<AgentsPage />} />
           <Route path="/customers/:id" element={<CustomerDetailPage />} />
           <Route path="/customers/groups" element={<CustomerGroupsPage />} />
           <Route path="/customers/groups/create" element={<CustomerGroupCreatePage />} />

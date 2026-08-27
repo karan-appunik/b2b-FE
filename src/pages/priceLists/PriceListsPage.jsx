@@ -8,25 +8,16 @@ import { parseCsv, parseBulkPriceListCsv, stringifyCsv } from '../../utils/csv'
 function TypeBadge({ pricingType, itemCount }) {
   if (pricingType === 'automatic') {
     return (
-      <span className="inline-flex items-center gap-1 rounded-md bg-purple-50 px-2 py-0.5 text-xs font-medium text-purple-700">
+      <span className="inline-flex items-center gap-1 rounded-full bg-purple-50 px-2 py-0.5 text-xs font-medium text-purple-700">
         Automatic
       </span>
     )
   }
   return (
-    <span className="inline-flex h-[26px] w-[109px] items-center justify-center gap-1 rounded-md bg-[#cefafe] px-2 py-0.5 text-xs font-medium text-blue-700">
-      <svg
-        className="size-3 stroke-2"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        aria-hidden="true"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5"
-        />
+    <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700">
+      <svg className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+        <path d="M9 12a.75.75 0 0 0 1.5 0V6.31l1.72 1.72a.75.75 0 1 0 1.06-1.06l-3-3a.75.75 0 0 0-1.06 0l-3 3a.75.75 0 1 0 1.06 1.06L9 6.31V12Z" />
+        <path d="M3.5 15a.75.75 0 0 1 .75.75v1.5c0 .414.336.75.75.75h10a.75.75 0 0 0 .75-.75v-1.5a.75.75 0 0 1 1.5 0v1.5A2.25 2.25 0 0 1 15 19.5H5A2.25 2.25 0 0 1 2.75 17.25v-1.5a.75.75 0 0 1 .75-.75Z" />
       </svg>
       Manual ({itemCount})
     </span>
@@ -35,71 +26,45 @@ function TypeBadge({ pricingType, itemCount }) {
 
 function DownloadIcon() {
   return (
-    <svg
-      className="h-[18px] w-[18px]"
-      viewBox="0 0 24 24"
-      fill="none"
-      strokeWidth="2"
-      stroke="currentColor"
-      aria-hidden="true"
-    >
+    <svg className="h-[18px] w-[18px]" viewBox="0 0 20 20" fill="currentColor">
       <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="m9 13.5 3 3m0 0 3-3m-3 3v-6m1.06-4.19-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z"
+        fillRule="evenodd"
+        d="M10 3a.75.75 0 01.75.75v10.638l3.96-4.158a.75.75 0 111.08 1.04l-5.25 5.5a.75.75 0 01-1.08 0l-5.25-5.5a.75.75 0 111.08-1.04l3.96 4.158V3.75A.75.75 0 0110 3z"
+        clipRule="evenodd"
       />
+      <path d="M3.5 12.75a.75.75 0 00-1.5 0v2.5A2.75 2.75 0 004.75 18h10.5A2.75 2.75 0 0018 15.25v-2.5a.75.75 0 00-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5z" />
     </svg>
   )
 }
 
 function EditIcon() {
   return (
-    <svg
-      className="h-[18px] w-[18px]"
-      viewBox="0 0 24 24"
-      fill="none"
-      strokeWidth="2"
-      stroke="currentColor"
-      aria-hidden="true"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
-      />
+    <svg className="h-[18px] w-[18px]" viewBox="0 0 20 20" fill="currentColor">
+      <path d="M5.433 13.917l1.262-3.155A4 4 0 017.58 9.42l6.92-6.918a2.121 2.121 0 013 3l-6.92 6.918c-.383.383-.84.685-1.343.885l-3.154 1.262a.5.5 0 01-.65-.65z" />
+      <path d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10a.75.75 0 000-1.5H4.75A2.75 2.75 0 002 5.75v9.5A2.75 2.75 0 004.75 18h9.5A2.75 2.75 0 0017 15.25V10a.75.75 0 00-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5z" />
     </svg>
   )
 }
 
 function ClearIcon() {
   return (
-    <svg
-      className="h-[18px] w-[18px]"
-      viewBox="0 0 24 24"
-      fill="none"
-      strokeWidth="2"
-      stroke="currentColor"
-      aria-hidden="true"
-    >
-      <path strokeLinecap="round" strokeLinejoin="round" d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+    <svg className="h-[18px] w-[18px]" viewBox="0 0 20 20" fill="currentColor">
+      <path
+        fillRule="evenodd"
+        d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 000 2h6a1 1 0 100-2H7z"
+        clipRule="evenodd"
+      />
     </svg>
   )
 }
 
 function TrashIcon() {
   return (
-    <svg
-      className="h-[18px] w-[18px]"
-      viewBox="0 0 24 24"
-      fill="none"
-      strokeWidth="2"
-      stroke="currentColor"
-      aria-hidden="true"
-    >
+    <svg className="h-[18px] w-[18px]" viewBox="0 0 20 20" fill="currentColor">
       <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
+        fillRule="evenodd"
+        d="M8.75 1A2.75 2.75 0 006 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 10.23 1.482l.149-.022.841 10.518A2.75 2.75 0 007.596 19h4.807a2.75 2.75 0 002.742-2.53l.841-10.52.149.023a.75.75 0 00.23-1.482 41.03 41.03 0 00-2.365-.298V3.75A2.75 2.75 0 0011.25 1h-2.5zM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4zM8.58 7.72a.75.75 0 00-1.5.06l.3 7.5a.75.75 0 101.5-.06l-.3-7.5zm4.34.06a.75.75 0 10-1.5-.06l-.3 7.5a.75.75 0 101.5.06l.3-7.5z"
+        clipRule="evenodd"
       />
     </svg>
   )
@@ -361,14 +326,14 @@ export default function PriceListsPage() {
 
   return (
     <div>
-      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-gray-900">Price Lists</h1>
           <p className="mt-1 text-sm text-gray-500">
             Price lists let you customize your specific B2B pricing.
           </p>
         </div>
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex items-center gap-3">
           <button
             onClick={openBulkModal}
             className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
@@ -396,13 +361,12 @@ export default function PriceListsPage() {
       {uploadError && <p className="mb-4 text-sm text-red-600">{uploadError}</p>}
 
       <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
-       <div className="overflow-x-auto">
         <table className="w-full text-left text-sm">
           <thead className="border-b border-gray-200 bg-gray-50 text-gray-500">
             <tr>
-              <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Name</th>
-              <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Currency</th>
-              <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Type</th>
+              <th className="px-4 py-3 font-medium">Name</th>
+              <th className="px-4 py-3 font-medium">Currency</th>
+              <th className="px-4 py-3 font-medium">Type</th>
               <th className="px-4 py-3"></th>
             </tr>
           </thead>
@@ -412,14 +376,14 @@ export default function PriceListsPage() {
                 <td className="px-4 py-3">
                   <Link
                     to={`/price-lists/${pl._id}`}
-                    className="font-medium uppercase text-[#1e2939] hover:underline"
+                    className="font-medium text-purple-600 hover:underline"
                   >
                     {pl.name}
                   </Link>
                   {pl.handle && <div className="text-xs text-gray-400">Handle: {pl.handle}</div>}
                 </td>
                 <td className="px-4 py-3">
-                  <span className="inline-flex h-[26px] w-[43px] items-center justify-center rounded-md border border-gray-200 text-xs font-medium text-gray-600">
+                  <span className="rounded border border-gray-200 px-2 py-0.5 text-xs font-medium text-gray-600">
                     {pl.currency || 'USD'}
                   </span>
                 </td>
@@ -453,7 +417,6 @@ export default function PriceListsPage() {
             )}
           </tbody>
         </table>
-       </div>
       </div>
 
       {bulkModalOpen && (

@@ -3,14 +3,10 @@ import { Link, useNavigate } from 'react-router-dom'
 import * as customerGroupsApi from '../../api/customerGroups.api'
 import * as priceListsApi from '../../api/priceLists.api'
 import {
-  PriceListsSection,
   PaymentMethodsSection,
-  StockDisplaySection,
-  OrderQuantityLimitsSection,
-  OrderTotalLimitsSection,
+  OrderLimitsSection,
   DEFAULT_PAYMENT_METHODS,
   DEFAULT_ORDER_LIMITS,
-  DEFAULT_STOCK_DISPLAY,
 } from './GroupSettingsFields'
 
 export default function CustomerGroupCreatePage() {
@@ -18,15 +14,11 @@ export default function CustomerGroupCreatePage() {
   const [priceLists, setPriceLists] = useState([])
   const [base, setBase] = useState(null)
   const [name, setName] = useState('')
-  const [handle, setHandle] = useState('')
   const [shopifyTag, setShopifyTag] = useState('')
+  const [priceListId, setPriceListId] = useState('')
 
-  const [overridePriceLists, setOverridePriceLists] = useState(false)
-  const [priceListIds, setPriceListIds] = useState([])
   const [overridePayment, setOverridePayment] = useState(false)
   const [paymentMethods, setPaymentMethods] = useState(DEFAULT_PAYMENT_METHODS)
-  const [overrideStockDisplay, setOverrideStockDisplay] = useState(false)
-  const [stockDisplay, setStockDisplay] = useState(DEFAULT_STOCK_DISPLAY)
   const [overrideOrderLimits, setOverrideOrderLimits] = useState(false)
   const [orderLimits, setOrderLimits] = useState(DEFAULT_ORDER_LIMITS)
 
@@ -51,11 +43,9 @@ export default function CustomerGroupCreatePage() {
     try {
       await customerGroupsApi.create({
         name: name.trim(),
-        handle: handle.trim(),
         shopifyTag: shopifyTag.trim(),
-        priceLists: overridePriceLists ? priceListIds.filter(Boolean) : [],
+        priceList: priceListId || null,
         paymentMethods: overridePayment ? paymentMethods : null,
-        stockDisplay: overrideStockDisplay ? stockDisplay : null,
         orderLimits: overrideOrderLimits ? orderLimits : null,
       })
       navigate('/customers/groups')
@@ -73,7 +63,7 @@ export default function CustomerGroupCreatePage() {
       </Link>
       <h1 className="mt-1 text-2xl font-semibold text-gray-900">Create customer group</h1>
       <p className="mt-1 text-sm text-gray-500">
-        Customers with this Shopify tag will automatically get the assigned price lists. Anything
+        Customers with this Shopify tag will automatically get the assigned price list. Anything
         you don't override here inherits from the base customer group.
       </p>
 
@@ -92,39 +82,38 @@ export default function CustomerGroupCreatePage() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">Handle (or ID)</label>
+              <label className="mb-1 block text-sm font-medium text-gray-700">Shopify tag</label>
               <input
-                value={handle}
-                onChange={(e) => setHandle(e.target.value)}
-                placeholder="auto-generated from name if left blank"
+                required
+                value={shopifyTag}
+                onChange={(e) => setShopifyTag(e.target.value)}
+                placeholder="e.g. b2b-wholesale"
                 className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none"
               />
             </div>
           </div>
+          <p className="mt-3 text-xs text-gray-400">
+            Customers tagged with this exact Shopify tag will be matched into this group.
+          </p>
+
           <div className="mt-4">
-            <label className="mb-1 block text-sm font-medium text-gray-700">Shopify tag</label>
-            <input
-              required
-              value={shopifyTag}
-              onChange={(e) => setShopifyTag(e.target.value)}
-              placeholder="e.g. b2b-wholesale"
+            <label className="mb-1 block text-sm font-medium text-gray-700">Assigned price list</label>
+            <select
+              value={priceListId}
+              onChange={(e) => setPriceListId(e.target.value)}
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none sm:w-1/2"
-            />
-            <p className="mt-1 text-xs text-gray-400">
-              Customers tagged with this exact Shopify tag will be matched into this group.
-            </p>
+            >
+              <option value="">
+                {base?.priceList ? `Inherit from base (${base.priceList.name})` : 'Select a price list'}
+              </option>
+              {priceLists.map((pl) => (
+                <option key={pl._id} value={pl._id}>
+                  {pl.name}
+                </option>
+              ))}
+            </select>
           </div>
         </section>
-
-        <PriceListsSection
-          isBase={false}
-          override={overridePriceLists}
-          onOverrideChange={setOverridePriceLists}
-          value={priceListIds}
-          onChange={setPriceListIds}
-          baseValue={(base?.priceLists || []).map((pl) => pl._id)}
-          priceListOptions={priceLists}
-        />
 
         <PaymentMethodsSection
           isBase={false}
@@ -135,31 +124,13 @@ export default function CustomerGroupCreatePage() {
           baseValue={base?.paymentMethods}
         />
 
-        <OrderQuantityLimitsSection
+        <OrderLimitsSection
           isBase={false}
           override={overrideOrderLimits}
           onOverrideChange={setOverrideOrderLimits}
-          value={orderLimits.quantity}
-          onChange={(quantity) => setOrderLimits({ ...orderLimits, quantity })}
-          baseValue={base?.orderLimits?.quantity}
-        />
-
-        <OrderTotalLimitsSection
-          isBase={false}
-          override={overrideOrderLimits}
-          onOverrideChange={setOverrideOrderLimits}
-          value={orderLimits.total}
-          onChange={(total) => setOrderLimits({ ...orderLimits, total })}
-          baseValue={base?.orderLimits?.total}
-        />
-
-        <StockDisplaySection
-          isBase={false}
-          override={overrideStockDisplay}
-          onOverrideChange={setOverrideStockDisplay}
-          value={stockDisplay}
-          onChange={setStockDisplay}
-          baseValue={base?.stockDisplay}
+          value={orderLimits}
+          onChange={setOrderLimits}
+          baseValue={base?.orderLimits}
         />
 
         {error && <p className="text-sm text-red-600">{error}</p>}
