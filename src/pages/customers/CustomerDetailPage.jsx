@@ -141,8 +141,10 @@ export default function CustomerDetailPage() {
         </dl>
         <h3 className="mb-3 mt-5 text-sm font-semibold text-gray-900">Payment on account</h3>
         <dl className="space-y-3 text-sm">
-          <Row label="Balance">{NONE_SET}</Row>
-          <Row label="Credit limit">{NONE_SET}</Row>
+          <Row label="Balance">{customer.creditBalance || 0}</Row>
+          <Row label="Credit limit">
+            {customer.creditLimit != null ? customer.creditLimit : NONE_SET}
+          </Row>
           <Row label="Net terms">{NONE_SET}</Row>
           <Row label="Currency">{NONE_SET}</Row>
         </dl>

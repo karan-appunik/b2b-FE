@@ -247,6 +247,7 @@ function PriceListCard({ priceList, productId, onChanged }) {
         </div>
       )}
 
+      <div className="overflow-x-auto">
       <table className="w-full text-left text-sm">
         <thead className="border-b border-gray-200 bg-gray-50 text-gray-500">
           <tr>
@@ -310,6 +311,7 @@ function PriceListCard({ priceList, productId, onChanged }) {
           )}
         </tbody>
       </table>
+      </div>
 
       {!readOnly && (
         <div className="flex items-center gap-4 p-4">
@@ -319,10 +321,6 @@ function PriceListCard({ priceList, productId, onChanged }) {
           >
             + Add a new price
           </button>
-          <a href="#" className="inline-flex items-center gap-1 text-sm font-medium text-purple-600 hover:underline">
-            Learn more
-            <ExternalLinkIcon />
-          </a>
         </div>
       )}
     </section>
@@ -351,6 +349,7 @@ function ShopifyPriceSection({ shopifyPrice }) {
         </span>
       </div>
 
+      <div className="overflow-x-auto">
       <table className="w-full text-left text-sm">
         <thead className="border-b border-gray-200 bg-gray-50 text-gray-500">
           <tr>
@@ -369,6 +368,7 @@ function ShopifyPriceSection({ shopifyPrice }) {
           </tr>
         </tbody>
       </table>
+      </div>
     </section>
   )
 }

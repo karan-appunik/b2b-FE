@@ -11,18 +11,6 @@ function SearchIcon({ className }) {
   )
 }
 
-function ExternalLinkIcon() {
-  return (
-    <svg className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <path
-        d="M8.5 5.5H5.75A1.25 1.25 0 0 0 4.5 6.75v7.5a1.25 1.25 0 0 0 1.25 1.25h7.5a1.25 1.25 0 0 0 1.25-1.25V11.5M11.5 4.5h4v4M15.25 4.75l-6 6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  )
-}
-
 function ChevronIcon({ open }) {
   return (
     <svg
@@ -119,11 +107,7 @@ export default function PriceEditorPage() {
       <h1 className="text-2xl font-semibold text-gray-900">Price Editor</h1>
       <p className="mt-1 text-sm text-gray-500">
         The Price Editor lets you easily make changes to your B2B pricing without needing to upload a
-        CSV file.{' '}
-        <a href="#" className="inline-flex items-center gap-1 font-medium text-purple-600 hover:underline">
-          Learn more
-          <ExternalLinkIcon />
-        </a>
+        CSV file.
       </p>
 
       <div className="mt-6 overflow-hidden rounded-xl border border-gray-200 bg-white">
@@ -140,6 +124,7 @@ export default function PriceEditorPage() {
         </div>
 
         {results.length > 0 && (
+          <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead className="border-b border-gray-200">
               <tr>
@@ -217,6 +202,7 @@ export default function PriceEditorPage() {
               })}
             </tbody>
           </table>
+          </div>
         )}
 
         {results.length === 0 && !loading && (
