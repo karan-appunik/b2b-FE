@@ -7,6 +7,10 @@ export const update = (id, data) => client.put(`/api/price-lists/${id}`, data).t
 export const remove = (id) => client.delete(`/api/price-lists/${id}`).then((r) => r.data)
 export const saveItems = (id, items) =>
   client.put(`/api/price-lists/${id}/items`, { items }).then((r) => r.data)
+export const upsertItem = (priceListId, productId, data) =>
+  client.put(`/api/price-lists/${priceListId}/items/${productId}`, data).then((r) => r.data)
+export const removeItem = (priceListId, productId) =>
+  client.delete(`/api/price-lists/${priceListId}/items/${productId}`).then((r) => r.data)
 export const assignCustomers = (id, customerIds) =>
   client.put(`/api/price-lists/${id}/customers`, { customerIds }).then((r) => r.data)
 export const pushToShopify = (id) =>

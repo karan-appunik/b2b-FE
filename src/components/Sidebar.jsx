@@ -10,7 +10,10 @@ const topLinks = [
 const navGroups = [
   {
     label: 'Pricing',
-    links: [{ to: '/price-lists', label: 'Price lists' }],
+    links: [
+      { to: '/price-lists', label: 'Price lists' },
+      { to: '/price-editor', label: 'Price editor' },
+    ],
   },
   {
     label: 'Customers',
