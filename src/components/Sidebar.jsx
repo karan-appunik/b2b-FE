@@ -111,6 +111,7 @@ const navGroups = [
     links: [
       { to: '/price-lists', label: 'Price lists' },
       { to: '/price-editor', label: 'Price editor' },
+      { to: '/discounts', label: 'Discounts' },
     ],
   },
   {

@@ -15,6 +15,10 @@ import CustomerGroupDetailPage from './pages/customerGroups/CustomerGroupDetailP
 import PriceListsPage from './pages/priceLists/PriceListsPage'
 import PriceListCreatePage from './pages/priceLists/PriceListCreatePage'
 import PriceListDetailPage from './pages/priceLists/PriceListDetailPage'
+import DiscountsPage from './pages/discounts/DiscountsPage'
+import DiscountCreatePage from './pages/discounts/DiscountCreatePage'
+import DiscountDetailPage from './pages/discounts/DiscountDetailPage'
+import DiscountPrioritiesPage from './pages/discounts/DiscountPrioritiesPage'
 import PriceEditorPage from './pages/priceEditor/PriceEditorPage'
 import PriceEditorVariantPage from './pages/priceEditor/PriceEditorVariantPage'
 
@@ -38,6 +42,10 @@ function App() {
           <Route path="/price-lists" element={<PriceListsPage />} />
           <Route path="/price-lists/create" element={<PriceListCreatePage />} />
           <Route path="/price-lists/:id" element={<PriceListDetailPage />} />
+          <Route path="/discounts" element={<DiscountsPage />} />
+          <Route path="/discounts/create" element={<DiscountCreatePage />} />
+          <Route path="/discounts/priorities" element={<DiscountPrioritiesPage />} />
+          <Route path="/discounts/:id" element={<DiscountDetailPage />} />
           <Route path="/price-editor" element={<PriceEditorPage />} />
           <Route path="/price-editor/:id" element={<PriceEditorVariantPage />} />
         </Route>
