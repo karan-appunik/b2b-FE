@@ -1,6 +1,151 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import * as priceListsApi from '../../api/priceLists.api'
+import { stringifyCsv } from '../../utils/csv'
+
+const CURRENCY_NAMES = {
+  USD: 'US Dollar',
+  EUR: 'Euro',
+  GBP: 'British Pound',
+  CAD: 'Canadian Dollar',
+  AUD: 'Australian Dollar',
+  NZD: 'New Zealand Dollar',
+  INR: 'Indian Rupee',
+  JPY: 'Japanese Yen',
+  CHF: 'Swiss Franc',
+}
+
+function formatCurrency(code) {
+  if (!code) return ''
+  const name = CURRENCY_NAMES[code]
+  return name ? `${code} - ${name}` : code
+}
+
+function ChevronLeftIcon() {
+  return (
+    <svg className="h-5 w-5 shrink-0 text-gray-900" viewBox="0 0 20 20" fill="currentColor">
+      <path
+        fillRule="evenodd"
+        d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z"
+        clipRule="evenodd"
+      />
+    </svg>
+  )
+}
+
+function DownloadIcon() {
+  return (
+    <svg
+      className="h-[18px] w-[18px]"
+      viewBox="0 0 24 24"
+      fill="none"
+      strokeWidth="2"
+      stroke="currentColor"
+      aria-hidden="true"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="m9 13.5 3 3m0 0 3-3m-3 3v-6m1.06-4.19-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z"
+      />
+    </svg>
+  )
+}
+
+function ClearIcon() {
+  return (
+    <svg
+      className="h-[18px] w-[18px]"
+      viewBox="0 0 24 24"
+      fill="none"
+      strokeWidth="2"
+      stroke="currentColor"
+      aria-hidden="true"
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+    </svg>
+  )
+}
+
+function TrashIcon() {
+  return (
+    <svg
+      className="h-[18px] w-[18px]"
+      viewBox="0 0 24 24"
+      fill="none"
+      strokeWidth="2"
+      stroke="currentColor"
+      aria-hidden="true"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
+      />
+    </svg>
+  )
+}
+
+function MoreActionsMenu({ onDownload, onClear, onDelete }) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef(null)
+
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false)
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  function runAction(action) {
+    setOpen(false)
+    action()
+  }
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className="flex items-center gap-1 rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+      >
+        More actions
+        <svg className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
+          <path
+            fillRule="evenodd"
+            d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+            clipRule="evenodd"
+          />
+        </svg>
+      </button>
+      {open && (
+        <div className="absolute right-0 z-20 mt-1 w-44 overflow-hidden rounded-lg border border-gray-200 bg-white py-1 shadow-lg">
+          <button
+            onClick={() => runAction(onDownload)}
+            className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
+          >
+            <DownloadIcon />
+            Download CSV
+          </button>
+          <button
+            onClick={() => runAction(onClear)}
+            className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
+          >
+            <ClearIcon />
+            Clear
+          </button>
+          <button
+            onClick={() => runAction(onDelete)}
+            className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-red-600 hover:bg-gray-50"
+          >
+            <TrashIcon />
+            Delete
+          </button>
+        </div>
+      )}
+    </div>
+  )
+}
 
 export default function PriceListDetailPage() {
   const { id } = useParams()
@@ -51,32 +196,48 @@ export default function PriceListDetailPage() {
     navigate('/price-lists')
   }
 
+  function handleDownload() {
+    const rows = priceList.items.map((item) => [item.product.sku, item.price])
+    const csv = stringifyCsv([['sku', 'price'], ...rows])
+    const blob = new Blob([csv], { type: 'text/csv' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `${priceList.handle || priceList.name}-prices.csv`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
+  async function handleClear() {
+    if (!confirm(`Clear all prices from "${priceList.name}"? This removes every product from the list.`))
+      return
+    await priceListsApi.saveItems(id, [])
+    setMessage(`Cleared all prices from "${priceList.name}".`)
+    loadAll()
+  }
+
   if (!priceList) {
     return <p className="text-gray-500">Loading…</p>
   }
 
   return (
-    <div className="mx-auto max-w-3xl">
-      <div className="flex items-center justify-between">
-        <div>
-          <Link to="/price-lists" className="text-sm text-purple-600 hover:underline">
-            ← Price Lists
+    <div className="mx-auto max-w-[672px]">
+      <div>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <Link
+            to="/price-lists"
+            className="inline-flex items-center gap-1 text-2xl font-semibold uppercase text-gray-900"
+          >
+            <ChevronLeftIcon />
+            {priceList.name}
           </Link>
-          <h1 className="mt-1 text-2xl font-semibold text-gray-900">{priceList.name}</h1>
-          <p className="mt-1 text-sm text-gray-500">
-            Choose how you want your pricing to work with automatic and manual pricing.
-          </p>
+          <MoreActionsMenu onDownload={handleDownload} onClear={handleClear} onDelete={handleDelete} />
         </div>
-        <button onClick={handleDelete} className="text-sm text-red-600 hover:underline">
-          Delete price list
-        </button>
+        <p className="mt-1 text-sm text-gray-500">
+          Choose how you want your pricing to work with automatic and manual pricing.
+        </p>
       </div>
 
-      {priceList.pricingType === 'manual' && priceList.shopifyPushedAt && (
-        <p className="mt-4 text-xs text-gray-500">
-          Last synced to Shopify: {new Date(priceList.shopifyPushedAt).toLocaleString()}
-        </p>
-      )}
       {priceList.shopifyPushError && (
         <p className="mt-2 text-sm text-red-600">Last Shopify sync failed: {priceList.shopifyPushError}</p>
       )}
@@ -94,11 +255,14 @@ export default function PriceListDetailPage() {
                 required
                 value={meta.name}
                 onChange={(e) => setMeta({ ...meta, name: e.target.value })}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none"
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm uppercase focus:border-purple-500 focus:outline-none"
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">Handle (or ID)</label>
+              <div className="mb-1 flex items-center justify-between">
+                <label className="block text-sm font-medium text-gray-700">Handle (or ID)</label>
+                <span className="text-xs text-gray-400">{priceList.handle.length}/64</span>
+              </div>
               <input
                 disabled
                 value={priceList.handle}
@@ -110,7 +274,7 @@ export default function PriceListDetailPage() {
             <label className="mb-1 block text-sm font-medium text-gray-700">Currency</label>
             <input
               disabled
-              value={priceList.currency}
+              value={formatCurrency(priceList.currency)}
               className="w-full rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-500 sm:w-1/2"
             />
           </div>

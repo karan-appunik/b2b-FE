@@ -3,7 +3,13 @@ import { Link } from 'react-router-dom'
 import * as customersApi from '../../api/customers.api'
 import * as customerGroupsApi from '../../api/customerGroups.api'
 
-export default function CustomersPage() {
+const ROLE_LABELS = {
+  sales_agent: 'Sales agent',
+  sales_admin: 'Sales administrator',
+  external_sales_rep: 'External sales rep',
+}
+
+export default function AgentsPage() {
   const [customers, setCustomers] = useState([])
   const [groups, setGroups] = useState([])
   const [search, setSearch] = useState('')
@@ -20,27 +26,22 @@ export default function CustomersPage() {
     return matched?.name || groups.find((g) => g.isBase)?.name || 'Base'
   }
 
-  const ROLE_LABELS = {
-    customer: 'Standard',
-    sales_agent: 'Sales agent',
-    sales_admin: 'Sales admin',
-    external_sales_rep: 'External sales rep',
-  }
+  const agents = useMemo(() => customers.filter((c) => c.role && c.role !== 'customer'), [customers])
 
-  const filteredCustomers = useMemo(() => {
+  const filteredAgents = useMemo(() => {
     const q = search.trim().toLowerCase()
-    if (!q) return customers
-    return customers.filter(
+    if (!q) return agents
+    return agents.filter(
       (c) => c.name?.toLowerCase().includes(q) || c.email?.toLowerCase().includes(q),
     )
-  }, [customers, search])
+  }, [agents, search])
 
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-semibold text-gray-900">Customers</h1>
+        <h1 className="text-2xl font-semibold text-gray-900">Sales agents</h1>
         <p className="mt-1 text-sm text-gray-500">
-          List of all customers synced from your Shopify store.
+          Sales agents can place orders and manage accounts on behalf of your B2B customers.
         </p>
       </div>
 
@@ -67,13 +68,17 @@ export default function CustomersPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
-            {filteredCustomers.map((c) => (
+            {filteredAgents.map((c) => (
               <tr key={c._id}>
-                <td className="px-4 py-3 text-gray-900">{c.name}</td>
+                <td className="px-4 py-3 font-medium text-purple-600">
+                  <Link to={`/customers/${c._id}`} className="hover:underline">
+                    {c.name}
+                  </Link>
+                </td>
                 <td className="px-4 py-3 text-gray-500">{c.email}</td>
                 <td className="px-4 py-3">
-                  <span className="inline-flex items-center rounded-full bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700">
-                    {ROLE_LABELS[c.role] || 'Standard'}
+                  <span className="inline-flex items-center rounded-full bg-sky-50 px-2 py-0.5 text-xs font-medium text-sky-700">
+                    {ROLE_LABELS[c.role] || c.role}
                   </span>
                 </td>
                 <td className="px-4 py-3">
@@ -91,12 +96,12 @@ export default function CustomersPage() {
                 </td>
               </tr>
             ))}
-            {filteredCustomers.length === 0 && (
+            {filteredAgents.length === 0 && (
               <tr>
                 <td colSpan={5} className="px-4 py-8 text-center text-gray-400">
-                  {customers.length === 0
-                    ? 'No customers synced yet — install the app on your store or wait for the next sync.'
-                    : 'No customers match your search.'}
+                  {agents.length === 0
+                    ? 'No sales agents yet — open a customer and assign them the "Sales agent" or "Sales administrator" role.'
+                    : 'No agents match your search.'}
                 </td>
               </tr>
             )}

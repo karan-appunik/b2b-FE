@@ -107,9 +107,9 @@ export default function ProductsPage() {
 
   return (
     <div>
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-2xl font-semibold text-gray-900">Products</h1>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <button
             onClick={() => fileInputRef.current?.click()}
             className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
@@ -152,6 +152,7 @@ export default function ProductsPage() {
       {importError && <p className="mb-4 text-sm text-red-600">{importError}</p>}
 
       <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
+       <div className="overflow-x-auto">
         <table className="w-full text-left text-sm">
           <thead className="border-b border-gray-200 bg-gray-50 text-gray-500">
             <tr>
@@ -198,6 +199,7 @@ export default function ProductsPage() {
             )}
           </tbody>
         </table>
+       </div>
       </div>
 
       {editing !== null && (
