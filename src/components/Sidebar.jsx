@@ -40,14 +40,6 @@ function ActivityIcon() {
   )
 }
 
-function CubeIcon() {
-  return (
-    <svg className="h-4 w-4 shrink-0" viewBox="0 0 20 20" fill="currentColor">
-      <path d="M9.504 1.132a1 1 0 01.992 0l7 4A1 1 0 0118 6v8a1 1 0 01-.504.868l-7 4a1 1 0 01-.992 0l-7-4A1 1 0 012 14V6a1 1 0 01.504-.868l7-4zM10 3.152 5.104 6 10 8.848 14.896 6 10 3.152zM4 7.723v5.554l5 2.857V10.58L4 7.723zm7 8.411 5-2.857V7.723l-5 2.857v5.554z" />
-    </svg>
-  )
-}
-
 function TagIcon() {
   return (
     <svg
@@ -86,6 +78,44 @@ function UsersIcon() {
   )
 }
 
+function FormsIcon() {
+  return (
+    <svg
+      className="h-4 w-4 shrink-0"
+      viewBox="0 0 24 24"
+      fill="none"
+      strokeWidth="1.5"
+      stroke="currentColor"
+      aria-hidden="true"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
+      />
+    </svg>
+  )
+}
+
+function IntegrationsIcon() {
+  return (
+    <svg
+      className="h-4 w-4 shrink-0"
+      viewBox="0 0 24 24"
+      fill="none"
+      strokeWidth="1.5"
+      stroke="currentColor"
+      aria-hidden="true"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244"
+      />
+    </svg>
+  )
+}
+
 function HelpIcon() {
   return (
     <svg className="h-4 w-4 shrink-0" viewBox="0 0 20 20" fill="currentColor">
@@ -101,7 +131,6 @@ function HelpIcon() {
 const topLinks = [
   { to: '/', label: 'Home', end: true, icon: HomeIcon },
   { to: '/activity', label: 'Activity', icon: ActivityIcon },
-  { to: '/products', label: 'Products', icon: CubeIcon },
 ]
 
 const navGroups = [
@@ -121,6 +150,18 @@ const navGroups = [
       { to: '/customers', label: 'Customers', end: true },
       { to: '/customers/agents', label: 'Agents' },
       { to: '/customers/groups', label: 'Groups' },
+    ],
+  },
+  {
+    label: 'Forms',
+    icon: FormsIcon,
+    links: [{ to: '/forms', label: 'Forms', end: true }],
+  },
+  {
+    label: 'Integrations',
+    icon: IntegrationsIcon,
+    links: [
+      { to: '/integrations/products-sync', label: 'Product sync' },
     ],
   },
 ]

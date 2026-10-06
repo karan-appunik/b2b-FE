@@ -128,7 +128,7 @@ export default function Dashboard() {
 
       <h2 className="mb-3 mt-8 text-sm font-semibold text-gray-900">Data sync health</h2>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <SyncHealthCard label="Product sync" issues={syncHealth?.products.issues ?? 0} viewLink="/products" />
+        <SyncHealthCard label="Product sync" issues={syncHealth?.products.issues ?? 0} viewLink="/integrations/products-sync" />
         <SyncHealthCard label="Customer sync" issues={syncHealth?.customers.issues ?? 0} viewLink="/customers" />
       </div>
 
