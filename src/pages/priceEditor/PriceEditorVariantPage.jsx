@@ -95,6 +95,22 @@ function RowForm({ initial, currency, onSave, onCancel }) {
   const [minQuantity, setMinQuantity] = useState(initial.minQuantity)
   const [unitOfMeasure, setUnitOfMeasure] = useState(initial.unitOfMeasure)
   const [price, setPrice] = useState(initial.price)
+  const [saving, setSaving] = useState(false)
+
+  async function handleSubmit() {
+    setSaving(true)
+    try {
+      await onSave({
+        minQuantity: Math.max(1, Number(minQuantity) || 1),
+        unitOfMeasure,
+        price: Number(price) || 0,
+      })
+    } catch (err) {
+      alert(err.response?.data?.message || err.message || 'Failed to save price')
+    } finally {
+      setSaving(false)
+    }
+  }
 
   return (
     <tr className="bg-gray-50">
@@ -135,20 +151,16 @@ function RowForm({ initial, currency, onSave, onCancel }) {
         <label className="mb-1 block text-xs invisible">Actions</label>
         <div className="inline-flex gap-2">
           <button
-            onClick={() =>
-              onSave({
-                minQuantity: Math.max(1, Number(minQuantity) || 1),
-                unitOfMeasure,
-                price: Number(price) || 0,
-              })
-            }
-            className="rounded-md bg-purple-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-purple-700"
+            onClick={handleSubmit}
+            disabled={saving}
+            className="cursor-pointer rounded-md bg-purple-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-purple-700 disabled:opacity-60"
           >
-            Save
+            {saving ? 'Saving...' : 'Save'}
           </button>
           <button
             onClick={onCancel}
-            className="rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
+            disabled={saving}
+            className="cursor-pointer rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-60"
           >
             Cancel
           </button>
@@ -314,13 +326,22 @@ function PriceListCard({ priceList, productId, onChanged }) {
       </div>
 
       {!readOnly && (
-        <div className="flex items-center gap-4 p-4">
+        <div className="flex items-center gap-3 border-t border-gray-100 p-4">
           <button
             onClick={() => setAddingNew(true)}
-            className="rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+            className="cursor-pointer rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 shadow-xs hover:bg-gray-50"
           >
             + Add a new price
           </button>
+          <a
+            href="https://docs.sparklayer.io/price-editor"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 text-xs text-purple-600 hover:underline"
+          >
+            Learn more
+            <ExternalLinkIcon />
+          </a>
         </div>
       )}
     </section>
@@ -476,11 +497,14 @@ export default function PriceEditorVariantPage() {
               onChange={(e) => navigate(`/price-editor/${e.target.value}`)}
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none"
             >
-              {variants.map((v) => (
-                <option key={v.id} value={v.id}>
-                  SKU: {v.sku}
-                </option>
-              ))}
+              {variants.map((v) => {
+                const variantId = v.shopifyVariantId ? v.shopifyVariantId.split('/').pop() : ''
+                return (
+                  <option key={v.id} value={v.id}>
+                    SKU: {v.sku} {variantId ? `(${variantId})` : ''}
+                  </option>
+                )
+              })}
             </select>
           </div>
         )}

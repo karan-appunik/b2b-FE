@@ -49,6 +49,9 @@ export default function Login() {
               onChange={(e) => setForm({ ...form, password: e.target.value })}
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none"
             />
+            <Link to="/forgot-password" className="mt-1 inline-block text-sm text-purple-600 hover:underline">
+              Forgot your password?
+            </Link>
           </div>
 
           {error && <p className="text-sm text-red-600">{error}</p>}

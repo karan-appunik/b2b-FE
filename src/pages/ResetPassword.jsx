@@ -1,25 +1,32 @@
 import { useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
+import * as authApi from '../api/auth.api'
 
-export default function Register() {
-  const { register } = useAuth()
-  const navigate = useNavigate()
+export default function ResetPassword() {
   const [searchParams] = useSearchParams()
-  const shop = searchParams.get('shop') || ''
-  const [form, setForm] = useState({ name: '', email: '', password: '' })
+  const navigate = useNavigate()
+  const email = searchParams.get('email') || ''
+  const token = searchParams.get('token') || ''
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
   async function handleSubmit(e) {
     e.preventDefault()
     setError('')
+
+    if (password !== confirmPassword) {
+      setError('Passwords do not match')
+      return
+    }
+
     setSubmitting(true)
     try {
-      await register({ ...form, shop })
-      navigate('/', { replace: true })
+      await authApi.resetPassword({ email, token, password })
+      navigate('/login', { replace: true })
     } catch (err) {
-      setError(err.response?.data?.message || 'Registration failed')
+      setError(err.response?.data?.message || 'Reset failed')
     } finally {
       setSubmitting(false)
     }
@@ -29,32 +36,16 @@ export default function Register() {
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
       <div className="w-full max-w-sm rounded-xl border border-gray-200 bg-white p-8 shadow-sm">
         <h1 className="mb-1 text-xl font-semibold text-gray-900">SparkLayer</h1>
-        <p className="mb-6 text-sm text-gray-500">Create the admin account</p>
-
-        {!shop && (
-          <p className="mb-4 text-sm text-red-600">
-            No shop detected. Open this page from the SparkLayer admin app link to register.
-          </p>
-        )}
+        <p className="mb-6 text-sm text-gray-500">Reset your password</p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">Name</label>
-            <input
-              required
-              value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none"
-            />
-          </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">Email</label>
+            <label className="mb-1 block text-sm font-medium text-gray-700">Email Address</label>
             <input
               type="email"
-              required
-              value={form.email}
-              onChange={(e) => setForm({ ...form, email: e.target.value })}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none"
+              value={email}
+              readOnly
+              className="w-full rounded-md border border-gray-300 bg-gray-100 px-3 py-2 text-sm text-gray-500"
             />
           </div>
           <div>
@@ -63,8 +54,19 @@ export default function Register() {
               type="password"
               required
               minLength={6}
-              value={form.password}
-              onChange={(e) => setForm({ ...form, password: e.target.value })}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none"
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-sm font-medium text-gray-700">Confirm Password</label>
+            <input
+              type="password"
+              required
+              minLength={6}
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none"
             />
           </div>
@@ -73,17 +75,16 @@ export default function Register() {
 
           <button
             type="submit"
-            disabled={submitting || !shop}
+            disabled={submitting || !token || !email}
             className="w-full rounded-md bg-purple-600 px-3 py-2 text-sm font-medium text-white hover:bg-purple-700 disabled:opacity-50"
           >
-            {submitting ? 'Creating…' : 'Create account'}
+            {submitting ? 'Resetting…' : 'Reset Password'}
           </button>
         </form>
 
         <p className="mt-4 text-center text-sm text-gray-500">
-          Already have an account?{' '}
           <Link to="/login" className="text-purple-600 hover:underline">
-            Sign in
+            Back to sign in
           </Link>
         </p>
       </div>

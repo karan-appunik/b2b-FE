@@ -68,7 +68,7 @@ export default function CustomerDetailPage() {
     return <p className="text-gray-500">Loading…</p>
   }
 
-  const shopifyHandle = import.meta.env.VITE_SHOPIFY_SHOP?.replace(/^https?:\/\//, '')
+  const shopifyHandle = customer.shop?.replace(/^https?:\/\//, '')
     .replace(/\/$/, '')
     .replace(/\.myshopify\.com$/, '')
   const shopifyNumericId = customer.shopifyCustomerId?.split('/').pop()
