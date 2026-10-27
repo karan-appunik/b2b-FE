@@ -11,6 +11,19 @@ import Activity from './pages/Activity'
 import CustomersPage from './pages/customers/CustomersPage'
 import CustomerDetailPage from './pages/customers/CustomerDetailPage'
 import AgentsPage from './pages/customers/AgentsPage'
+import RolesPage from './pages/customers/RolesPage'
+import RoleEditorPage from './pages/customers/RoleEditorPage'
+import ApprovalsPage from './pages/customers/ApprovalsPage'
+import DelegationsPage from './pages/customers/DelegationsPage'
+import IntegrationFeedsPage from './pages/customers/IntegrationFeedsPage'
+import QuotesPage from './pages/customers/QuotesPage'
+import PaymentLinksPage from './pages/customers/PaymentLinksPage'
+import NewCustomersPage from './pages/customers/NewCustomersPage'
+import AgentReportsPage from './pages/customers/AgentReportsPage'
+import TerritoriesPage from './pages/customers/TerritoriesPage'
+import AgentActivityPage from './pages/customers/AgentActivityPage'
+import PrivacyPage from './pages/customers/PrivacyPage'
+import ApprovalPoliciesPage from './pages/customers/ApprovalPoliciesPage'
 import CustomerGroupsPage from './pages/customerGroups/CustomerGroupsPage'
 import CustomerGroupCreatePage from './pages/customerGroups/CustomerGroupCreatePage'
 import CustomerGroupDetailPage from './pages/customerGroups/CustomerGroupDetailPage'
@@ -47,6 +60,20 @@ function App() {
           <Route path="/products" element={<Navigate to="/integrations/products-sync" replace />} />
           <Route path="/customers" element={<CustomersPage />} />
           <Route path="/customers/agents" element={<AgentsPage />} />
+          <Route path="/customers/roles" element={<RolesPage />} />
+          <Route path="/customers/roles/new" element={<RoleEditorPage />} />
+          <Route path="/customers/roles/:key" element={<RoleEditorPage />} />
+          <Route path="/customers/approvals" element={<ApprovalsPage />} />
+          <Route path="/customers/delegations" element={<DelegationsPage />} />
+          <Route path="/integrations/feeds" element={<IntegrationFeedsPage />} />
+          <Route path="/customers/quotes" element={<QuotesPage />} />
+          <Route path="/customers/payment-links" element={<PaymentLinksPage />} />
+          <Route path="/customers/new-customers" element={<NewCustomersPage />} />
+          <Route path="/customers/agent-reports" element={<AgentReportsPage />} />
+          <Route path="/customers/territories" element={<TerritoriesPage />} />
+          <Route path="/customers/agent-activity" element={<AgentActivityPage />} />
+          <Route path="/customers/privacy" element={<PrivacyPage />} />
+          <Route path="/customers/approval-policies" element={<ApprovalPoliciesPage />} />
           <Route path="/customers/:id" element={<CustomerDetailPage />} />
           <Route path="/customers/groups" element={<CustomerGroupsPage />} />
           <Route path="/customers/groups/create" element={<CustomerGroupCreatePage />} />

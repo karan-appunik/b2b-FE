@@ -544,6 +544,7 @@ function OrderLimitPairSection({
   minLabel,
   maxLabel,
   addLabel,
+  showIncrement = false,
   isBase,
   override,
   onOverrideChange,
@@ -559,11 +560,11 @@ function OrderLimitPairSection({
   const toggle = () => (isControlled ? onToggle(!open) : setInternalOpen((o) => !o))
   const shown = override || isBase ? value : baseValue || { min: null, max: null }
   const disabled = !isBase && !override
-  const hasValue = shown.min != null || shown.max != null
+  const hasValue = shown.min != null || shown.max != null || shown.increment != null
   const [fieldsVisible, setFieldsVisible] = useState(hasValue)
 
   function reset() {
-    onChange({ min: null, max: null })
+    onChange({ min: null, max: null, increment: null })
     setFieldsVisible(false)
   }
 
@@ -603,6 +604,9 @@ function OrderLimitPairSection({
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <LimitField label={minLabel} value={shown.min} disabled={disabled} onChange={(v) => onChange({ ...shown, min: v })} />
                 <LimitField label={maxLabel} value={shown.max} disabled={disabled} onChange={(v) => onChange({ ...shown, max: v })} />
+                {showIncrement && (
+                  <LimitField label="Order in multiples of (pack size)" value={shown.increment} disabled={disabled} onChange={(v) => onChange({ ...shown, increment: v })} />
+                )}
               </div>
               <button
                 type="button"
@@ -649,6 +653,7 @@ export function OrderQuantityLimitsSection(props) {
       minLabel="Minimum order quantity"
       maxLabel="Maximum order quantity"
       addLabel="Add order quantity limit"
+      showIncrement
       {...props}
     />
   )

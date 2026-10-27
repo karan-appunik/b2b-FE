@@ -109,10 +109,13 @@ const COLLAPSIBLE_SECTION_IDS = new Set([
 ])
 
 function formatLimitRange(limit) {
-  if (!limit || (limit.min == null && limit.max == null)) return null
-  if (limit.min != null && limit.max != null) return `${limit.min} – ${limit.max}`
-  if (limit.min != null) return `Min ${limit.min}`
-  return `Max ${limit.max}`
+  if (!limit || (limit.min == null && limit.max == null && !limit.increment)) return null
+  const parts = []
+  if (limit.min != null && limit.max != null) parts.push(`${limit.min} – ${limit.max}`)
+  else if (limit.min != null) parts.push(`Min ${limit.min}`)
+  else if (limit.max != null) parts.push(`Max ${limit.max}`)
+  if (limit.increment) parts.push(`in packs of ${limit.increment}`)
+  return parts.join(', ')
 }
 
 function formatTotalLimits(rows) {

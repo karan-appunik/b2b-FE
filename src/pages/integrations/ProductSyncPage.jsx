@@ -3,18 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import * as productsApi from '../../api/products.api'
 import * as dashboardApi from '../../api/dashboard.api'
 
-function ExternalLinkIcon() {
-  return (
-    <svg className="inline-block h-3.5 w-3.5 shrink-0" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <path
-        d="M8.5 5.5H5.75A1.25 1.25 0 0 0 4.5 6.75v7.5a1.25 1.25 0 0 0 1.25 1.25h7.5a1.25 1.25 0 0 0 1.25-1.25V11.5M11.5 4.5h4v4M15.25 4.75l-6 6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  )
-}
-
 function SearchIcon({ className }) {
   return (
     <svg className={className} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -132,16 +120,7 @@ export default function ProductSyncPage() {
         <div>
           <h1 className="text-2xl font-semibold text-gray-900">Product Sync</h1>
           <p className="mt-1 text-sm text-gray-500">
-            This synchronises product data from your eCommerce platform.{' '}
-            <a
-              href="https://docs.sparklayer.io/data-sync"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 font-medium text-purple-600 hover:underline"
-            >
-              Learn more
-              <ExternalLinkIcon />
-            </a>
+            This synchronises product data from your eCommerce platform.
           </p>
         </div>
 
@@ -190,16 +169,7 @@ export default function ProductSyncPage() {
         <div>
           <h2 className="text-lg font-semibold text-gray-900">Product Data Lookup</h2>
           <p className="text-sm text-gray-500">
-            Search and diagnose the product data you're sending to SparkLayer.{' '}
-            <a
-              href="https://docs.sparklayer.io/data-sync#product-data-lookup"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 font-medium text-purple-600 hover:underline"
-            >
-              Learn more
-              <ExternalLinkIcon />
-            </a>
+            Search and diagnose the product data you're sending to SparkLayer.
           </p>
         </div>
 
