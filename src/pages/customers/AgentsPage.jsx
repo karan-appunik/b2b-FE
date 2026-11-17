@@ -94,10 +94,10 @@ export default function AgentsPage() {
 
       <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
+          <table className="w-full whitespace-nowrap text-left text-sm">
             <thead className="border-b border-gray-200 bg-gray-50 text-gray-500">
               <tr>
-                <th className="px-4 py-3 font-medium">Name</th>
+                <th className="sticky left-0 z-10 bg-gray-50 px-4 py-3 font-medium">Name</th>
                 <th className="px-4 py-3 font-medium">Role</th>
                 <th className="px-4 py-3 font-medium">Territory</th>
                 <th className="px-4 py-3 font-medium">Manager</th>
@@ -113,7 +113,7 @@ export default function AgentsPage() {
             <tbody className="divide-y divide-gray-100">
               {filtered.map((a) => (
                 <tr key={a.id}>
-                  <td className="px-4 py-3">
+                  <td className="sticky left-0 z-10 bg-white px-4 py-3">
                     <Link to={`/customers/${a.id}`} className="font-medium text-purple-600 hover:underline">
                       {a.name}
                     </Link>
@@ -133,8 +133,10 @@ export default function AgentsPage() {
                   <td className="whitespace-nowrap px-4 py-3 text-gray-600">
                     {a.lastActiveAt ? new Date(a.lastActiveAt).toLocaleDateString() : 'Never'}
                   </td>
-                  <td className="px-4 py-3 text-xs text-gray-600">
-                    {a.openWork.quotes} quotes · {a.openWork.exceptions} waiting · {a.openWork.carts} carts
+                  <td className="px-4 py-3 text-xs leading-5 text-gray-600">
+                    <div><span className="font-semibold text-gray-900">{a.openWork.quotes}</span> quotes</div>
+                    <div><span className="font-semibold text-gray-900">{a.openWork.exceptions}</span> waiting</div>
+                    <div><span className="font-semibold text-gray-900">{a.openWork.carts}</span> carts</div>
                   </td>
                   <td className="px-4 py-3">
                     <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_STYLE[a.status]}`}>

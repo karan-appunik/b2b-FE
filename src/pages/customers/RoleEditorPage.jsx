@@ -162,7 +162,7 @@ export default function RoleEditorPage() {
 
   if (!isNew && !current) {
     return (
-      <div className="mx-auto w-full max-w-2xl">
+      <div className="w-full">
         <p className="text-gray-500">This role no longer exists.</p>
         <Link to="/customers/roles" className="text-purple-600 hover:underline">
           Back to roles
@@ -172,7 +172,7 @@ export default function RoleEditorPage() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-2xl">
+    <div className="w-full">
       <div className="flex items-center gap-2">
         <Link
           to="/customers/roles"

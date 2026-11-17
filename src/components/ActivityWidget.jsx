@@ -3,9 +3,9 @@ import * as ordersApi from '../api/orders.api'
 
 const DAY_OPTIONS = [
   { value: 1, label: 'Today' },
-  { value: 7, label: 'Last 7 days' },
-  { value: 30, label: 'Last 30 days' },
-  { value: 90, label: 'Last 90 days' },
+  { value: 7, label: 'Last 7 Days' },
+  { value: 30, label: 'Last 30 Days' },
+  { value: 90, label: 'Last 90 Days' },
 ]
 
 const CURRENT_COLOR = '#2563eb'
@@ -274,7 +274,7 @@ export default function ActivityWidget({ days, onDaysChange, type, onTypeChange,
             onChange={(e) => onTypeChange(e.target.value)}
             className="appearance-none rounded-md border border-gray-300 bg-white py-1.5 pl-3 pr-10 text-sm text-gray-700 focus:border-purple-500 focus:outline-none"
           >
-            <option value="all">All activity types</option>
+            <option value="all">All Activity Types</option>
             <option value="orders">Orders</option>
           </select>
           <svg

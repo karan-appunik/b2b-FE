@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import BackButton from '../../components/BackButton'
 import * as discountsApi from '../../api/discounts.api'
 
 function GripIcon() {
@@ -82,11 +83,11 @@ export default function DiscountPrioritiesPage() {
   }
 
   return (
-    <div className="mx-auto max-w-2xl">
-      <Link to="/discounts" className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700">
-        ‹ Discounts
-      </Link>
-      <h1 className="mt-1 text-2xl font-semibold text-gray-900">Manage Priorities</h1>
+    <div className="w-full">
+      <div className="flex items-center gap-2">
+        <BackButton to="/discounts" label="Back to discounts" />
+        <h1 className="text-2xl font-semibold text-gray-900">Manage Priorities</h1>
+      </div>
       <p className="mt-1 text-sm text-gray-500">
         Drag discounts up and down to set the order they're considered in at checkout. Discounts nearer the
         top get first pick when more than one could apply.

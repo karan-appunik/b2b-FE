@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
+import BackButton from '../../components/BackButton'
 import * as formsApi from '../../api/forms.api'
 import { formatEntryValue } from './entryFormat'
 import { stringifyCsv } from '../../utils/csv'
@@ -78,11 +79,11 @@ export default function FormEntriesPage() {
 
   return (
     <div>
-      <Link to="/forms" className="text-sm text-purple-600 hover:underline">
-        ← Forms
-      </Link>
-      <div className="mt-1 flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-gray-900">{form.name} — Entries</h1>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <BackButton to="/forms" label="Back to forms" />
+          <h1 className="text-2xl font-semibold text-gray-900">{form.name} — Entries</h1>
+        </div>
         <div className="flex items-center gap-2">
           <button
             type="button"

@@ -3,16 +3,16 @@ import * as reportsApi from '../../api/reports.api'
 
 const GROUPS = [
   { value: 'none', label: 'Overall' },
-  { value: 'agent', label: 'By agent' },
-  { value: 'territory', label: 'By territory' },
-  { value: 'segment', label: 'By segment' },
+  { value: 'agent', label: 'By Agent' },
+  { value: 'territory', label: 'By Territory' },
+  { value: 'segment', label: 'By Segment' },
 ]
 
 const PERIODS = [
-  { days: 7, label: 'Last 7 days' },
-  { days: 30, label: 'Last 30 days' },
-  { days: 90, label: 'Last 90 days' },
-  { days: 365, label: 'Last year' },
+  { days: 7, label: 'Last 7 Days' },
+  { days: 30, label: 'Last 30 Days' },
+  { days: 90, label: 'Last 90 Days' },
+  { days: 365, label: 'Last Year' },
 ]
 
 function money(map) {
@@ -63,7 +63,7 @@ export default function AgentReportsPage() {
   const rows = report ? (groupBy === 'none' ? [report.total] : report.rows) : []
 
   return (
-    <div className="mx-auto w-full max-w-6xl">
+    <div className="w-full">
       <div className="mb-6">
         <h1 className="text-2xl font-semibold text-gray-900">Agent reports</h1>
         <p className="mt-1 text-sm text-gray-500">
@@ -72,7 +72,7 @@ export default function AgentReportsPage() {
       </div>
 
       {ops && (
-        <div className="mb-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <Card title="Approvals waiting" value={ops.pendingApprovals.count}
             note={ops.pendingApprovals.slaBreaches ? `${ops.pendingApprovals.slaBreaches} past their time limit` : 'none overdue'}
             bad={ops.pendingApprovals.slaBreaches > 0} />
@@ -95,19 +95,21 @@ export default function AgentReportsPage() {
         </div>
       )}
 
-      <div className="mb-4 flex flex-wrap items-center gap-3">
-        <select value={days} onChange={(e) => setDays(Number(e.target.value))}
-          className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm">
-          {PERIODS.map((p) => <option key={p.days} value={p.days}>{p.label}</option>)}
-        </select>
-        <label className="flex items-center gap-2 text-sm text-gray-600">
-          <input type="checkbox" checked={hideNames} onChange={(e) => setHideNames(e.target.checked)} />
-          Show agents as codes, not names
-        </label>
-        <div className="flex gap-2">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+        <div className="flex flex-wrap items-center gap-4">
+          <select value={days} onChange={(e) => setDays(Number(e.target.value))}
+            className="rounded-lg border border-gray-300 bg-white pl-3.5 pr-10 py-2 text-sm shadow-xs">
+            {PERIODS.map((p) => <option key={p.days} value={p.days}>{p.label}</option>)}
+          </select>
+          <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer select-none">
+            <input type="checkbox" checked={hideNames} onChange={(e) => setHideNames(e.target.checked)} className="h-4 w-4 rounded border-gray-300 text-purple-600 focus:ring-purple-500" />
+            Show agents as codes, not names
+          </label>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
           {GROUPS.map((g) => (
             <button key={g.value} onClick={() => setGroupBy(g.value)}
-              className={`rounded-full px-3 py-1 text-sm ${groupBy === g.value ? 'bg-purple-600 text-white' : 'bg-white text-gray-600 ring-1 ring-gray-200'}`}>
+              className={`cursor-pointer rounded-full px-3.5 py-1.5 text-sm font-medium transition ${groupBy === g.value ? 'bg-purple-600 text-white shadow-xs' : 'bg-white text-gray-600 ring-1 ring-gray-200 hover:bg-gray-50'}`}>
               {g.label}
             </button>
           ))}
@@ -118,48 +120,58 @@ export default function AgentReportsPage() {
 
       {report && (
         <>
-          <div className="mb-4 overflow-x-auto rounded-xl border border-gray-200 bg-white">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-gray-50 text-xs uppercase text-gray-500">
-                <tr>
-                  <th className="px-3 py-2">{groupBy === 'none' ? 'Total' : GROUPS.find((g) => g.value === groupBy).label.replace('By ', '')}</th>
-                  <th className="px-3 py-2">Orders</th>
-                  <th className="px-3 py-2">Revenue</th>
-                  <th className="px-3 py-2">Avg order</th>
-                  <th className="px-3 py-2">Active accounts</th>
-                  <th className="px-3 py-2">Quotes (sent)</th>
-                  <th className="px-3 py-2">Quote conversion</th>
-                  <th className="px-3 py-2">New customers</th>
-                  <th className="px-3 py-2">Exceptions</th>
-                  <th className="px-3 py-2">Exceptions per order</th>
-                </tr>
-              </thead>
-              <tbody>
-                {rows.map((r) => (
-                  <tr key={r.key} className="border-t border-gray-100">
-                    <td className="px-3 py-2 font-medium text-gray-900">{groupBy === 'none' ? 'All agents' : r.label}</td>
-                    <td className="px-3 py-2">{r.orders}</td>
-                    <td className="px-3 py-2">{money(r.revenue)}</td>
-                    <td className="px-3 py-2">{money(r.averageOrderValue)}</td>
-                    <td className="px-3 py-2">{r.activeAccounts}</td>
-                    <td className="px-3 py-2">{r.quotes.created} ({r.quotes.sent})</td>
-                    <td className="px-3 py-2">{pct(r.quoteConversion)}</td>
-                    <td className="px-3 py-2">{r.newCustomers}</td>
-                    <td className="px-3 py-2">{r.overrides}</td>
-                    <td className="px-3 py-2">{r.overrideRate === null ? '—' : (r.overrideRate / 100).toFixed(1)}</td>
+          <div className="mb-6 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-xs">
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[960px] text-left text-sm">
+                <thead className="border-b border-gray-200 bg-gray-50/80 text-xs font-semibold uppercase tracking-wider text-gray-500">
+                  <tr>
+                    <th className="px-4 py-3.5 whitespace-nowrap">{groupBy === 'none' ? 'Total' : GROUPS.find((g) => g.value === groupBy).label.replace('By ', '')}</th>
+                    <th className="px-4 py-3.5 whitespace-nowrap">Orders</th>
+                    <th className="px-4 py-3.5 whitespace-nowrap">Revenue</th>
+                    <th className="px-4 py-3.5 whitespace-nowrap">Avg order</th>
+                    <th className="px-4 py-3.5 whitespace-nowrap">Active accounts</th>
+                    <th className="px-4 py-3.5 whitespace-nowrap">Quotes (sent)</th>
+                    <th className="px-4 py-3.5 whitespace-nowrap">Quote conversion</th>
+                    <th className="px-4 py-3.5 whitespace-nowrap">New customers</th>
+                    <th className="px-4 py-3.5 whitespace-nowrap">Exceptions</th>
+                    <th className="px-4 py-3.5 whitespace-nowrap">Exceptions per order</th>
                   </tr>
-                ))}
-                {rows.length === 0 && (
-                  <tr><td colSpan="10" className="px-3 py-6 text-center text-gray-500">No activity in this period.</td></tr>
-                )}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {rows.map((r) => (
+                    <tr key={r.key} className="hover:bg-gray-50/60 transition">
+                      <td className="px-4 py-3.5 font-medium text-gray-900 whitespace-nowrap">{groupBy === 'none' ? 'All agents' : r.label}</td>
+                      <td className="px-4 py-3.5 text-gray-700 whitespace-nowrap">{r.orders}</td>
+                      <td className="px-4 py-3.5 font-medium text-gray-900 whitespace-nowrap">{money(r.revenue)}</td>
+                      <td className="px-4 py-3.5 text-gray-700 whitespace-nowrap">{money(r.averageOrderValue)}</td>
+                      <td className="px-4 py-3.5 text-gray-700 whitespace-nowrap">{r.activeAccounts}</td>
+                      <td className="px-4 py-3.5 text-gray-700 whitespace-nowrap">{r.quotes.created} ({r.quotes.sent})</td>
+                      <td className="px-4 py-3.5 text-gray-700 whitespace-nowrap">{pct(r.quoteConversion)}</td>
+                      <td className="px-4 py-3.5 text-gray-700 whitespace-nowrap">{r.newCustomers}</td>
+                      <td className="px-4 py-3.5 text-gray-700 whitespace-nowrap">{r.overrides}</td>
+                      <td className="px-4 py-3.5 text-gray-700 whitespace-nowrap">{r.overrideRate === null ? '—' : (r.overrideRate / 100).toFixed(1)}</td>
+                    </tr>
+                  ))}
+                  {rows.length === 0 && (
+                    <tr><td colSpan="10" className="px-4 py-8 text-center text-gray-500">No activity in this period.</td></tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
 
-          <div className="rounded-xl border border-gray-200 bg-white p-4 text-sm text-gray-700">
-            <div className="mb-1 font-medium text-gray-900">Where orders came from</div>
-            <div>Placed by a sales agent: {report.sources.assisted?.orders ?? 0} orders, {money(report.sources.assisted?.revenue)}</div>
-            <div>Everything else (customers ordering themselves, imports): {report.sources.other?.orders ?? 0} orders, {money(report.sources.other?.revenue)}</div>
+          <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-xs">
+            <h3 className="mb-3 text-sm font-semibold text-gray-900">Where orders came from</h3>
+            <div className="space-y-2.5 text-sm text-gray-600">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="font-medium text-gray-800">Placed by a sales agent:</span>
+                <span>{report.sources.assisted?.orders ?? 0} orders, {money(report.sources.assisted?.revenue)}</span>
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="font-medium text-gray-800">Everything else (customers ordering themselves, imports):</span>
+                <span>{report.sources.other?.orders ?? 0} orders, {money(report.sources.other?.revenue)}</span>
+              </div>
+            </div>
           </div>
         </>
       )}
@@ -169,10 +181,10 @@ export default function AgentReportsPage() {
 
 function Card({ title, value, note, bad }) {
   return (
-    <div className={`rounded-xl border bg-white p-4 ${bad ? 'border-red-200' : 'border-gray-200'}`}>
-      <div className="text-xs uppercase text-gray-500">{title}</div>
-      <div className={`mt-1 text-2xl font-semibold ${bad ? 'text-red-600' : 'text-gray-900'}`}>{value}</div>
-      <div className="mt-0.5 text-xs text-gray-500">{note}</div>
+    <div className={`rounded-xl border bg-white p-5 shadow-xs transition hover:border-gray-300 ${bad ? 'border-red-200' : 'border-gray-200'}`}>
+      <div className="text-xs font-semibold uppercase tracking-wider text-gray-500">{title}</div>
+      <div className={`mt-2 text-2xl font-bold tracking-tight ${bad ? 'text-red-600' : 'text-gray-900'}`}>{value}</div>
+      <div className="mt-1.5 text-xs text-gray-500">{note}</div>
     </div>
   )
 }

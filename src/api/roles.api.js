@@ -2,7 +2,8 @@ import client from './client'
 
 // Returns { catalog, roles } — the permission catalog the editor draws its
 // options from, and every role with how many people hold it.
-export const list = () => client.get('/api/roles').then((r) => r.data)
+// Hidden roles are left out unless { all: true } (only the settings page needs them).
+export const list = (params) => client.get('/api/roles', { params }).then((r) => r.data)
 export const create = (data) => client.post('/api/roles', data).then((r) => r.data)
 export const update = (key, data) => client.put(`/api/roles/${key}`, data).then((r) => r.data)
 export const remove = (key) => client.delete(`/api/roles/${key}`).then((r) => r.data)

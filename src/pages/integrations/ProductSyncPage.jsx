@@ -145,7 +145,7 @@ export default function ProductSyncPage() {
               Products sync completed with {issuesCount} error{issuesCount !== 1 ? 's' : ''}
             </h2>
             <p className="mt-0.5 text-sm text-gray-600">
-              We synced your products to Sparklayer, however some issues were encountered and we recommend fixing them.
+              We synced your products to Appunik Wholesale, however some issues were encountered and we recommend fixing them.
             </p>
             <p className="mt-2 text-xs text-gray-500">
               Full sync: 16/06/2025 at 20:56 — Partial sync:{' '}
@@ -169,7 +169,7 @@ export default function ProductSyncPage() {
         <div>
           <h2 className="text-lg font-semibold text-gray-900">Product Data Lookup</h2>
           <p className="text-sm text-gray-500">
-            Search and diagnose the product data you're sending to SparkLayer.
+            Search and diagnose the product data you're sending to Appunik Wholesale.
           </p>
         </div>
 

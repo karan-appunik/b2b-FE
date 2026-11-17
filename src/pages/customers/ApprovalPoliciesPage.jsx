@@ -113,6 +113,7 @@ function ToggleSwitch({ checked, onChange, label, description, danger = false })
 export default function ApprovalPoliciesPage() {
   const [policies, setPolicies] = useState([])
   const [roles, setRoles] = useState([])
+  const [allRoles, setAllRoles] = useState([])
   const [activeTab, setActiveTab] = useState('rules')
   const [settings, setSettings] = useState({
     hardFloorPercent: '',
@@ -136,6 +137,7 @@ export default function ApprovalPoliciesPage() {
     substitutes: [],
     moduleEnabled: true,
     featuresOff: [],
+    hiddenRoles: [],
     alertsEnabled: true,
     escalateApprovals: true,
     digestEnabled: true,
@@ -159,6 +161,7 @@ export default function ApprovalPoliciesPage() {
   useEffect(() => {
     approvalsApi.listPolicies().then((data) => setPolicies(data.policies))
     rolesApi.list().then((data) => setRoles(data.roles))
+    rolesApi.list({ all: true }).then((data) => setAllRoles(data.roles))
     approvalsApi.getSettings().then((s) =>
       setSettings({
         hardFloorPercent: s.hardFloorPercent === null ? '' : String(s.hardFloorPercent),
@@ -185,6 +188,7 @@ export default function ApprovalPoliciesPage() {
         substitutes: (s.substitutes || []).map((x) => ({ fromSku: x.fromSku, toSku: x.toSku, note: x.note || '' })),
         moduleEnabled: s.moduleEnabled !== false,
         featuresOff: s.featuresOff || [],
+        hiddenRoles: s.hiddenRoles || [],
         alertsEnabled: s.alertsEnabled !== false,
         escalateApprovals: s.escalateApprovals !== false,
         digestEnabled: s.digestEnabled !== false,
@@ -291,6 +295,7 @@ export default function ApprovalPoliciesPage() {
         substitutes: settings.substitutes.filter((x) => x.fromSku.trim() && x.toSku.trim()),
         moduleEnabled: settings.moduleEnabled,
         featuresOff: settings.featuresOff,
+        hiddenRoles: settings.hiddenRoles,
         alertsEnabled: settings.alertsEnabled,
         escalateApprovals: settings.escalateApprovals,
         digestEnabled: settings.digestEnabled,
@@ -300,6 +305,8 @@ export default function ApprovalPoliciesPage() {
         businessTimezone: settings.businessTimezone,
       })
       setMessage('Settings saved successfully.')
+      rolesApi.list().then((data) => setRoles(data.roles))
+      rolesApi.list({ all: true }).then((data) => setAllRoles(data.roles))
     } catch (err) {
       setError(err.response?.data?.message || 'Could not save the settings.')
     } finally {
@@ -318,7 +325,7 @@ export default function ApprovalPoliciesPage() {
   ]
 
   return (
-    <div className="mx-auto w-full max-w-5xl space-y-6">
+    <div className="space-y-6">
       {/* Top Header Card */}
       <div className="flex flex-col gap-4 rounded-2xl border border-gray-200/90 bg-white p-6 shadow-xs sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -539,7 +546,7 @@ export default function ApprovalPoliciesPage() {
                       onChange={(e) => setField('overrideType', e.target.value)}
                       className={selectClass}
                     >
-                      <option value="ANY">Any kind of exception</option>
+                      <option value="ANY">Any Kind of Exception</option>
                       {Object.entries(TYPE_LABELS).map(([value, label]) => (
                         <option key={value} value={value}>
                           {label}
@@ -567,8 +574,8 @@ export default function ApprovalPoliciesPage() {
                       onChange={(e) => setField('effect', e.target.value)}
                       className={selectClass}
                     >
-                      <option value="route">Route for manager approval</option>
-                      <option value="deny">Deny / Refuse immediately</option>
+                      <option value="route">Route for Manager Approval</option>
+                      <option value="deny">Deny / Refuse Immediately</option>
                     </select>
                   </div>
 
@@ -859,8 +866,8 @@ export default function ApprovalPoliciesPage() {
                   onChange={(e) => setSettings((s) => ({ ...s, inventoryMode: e.target.value }))}
                   className={selectClass}
                 >
-                  <option value="informational">Only check what is in stock</option>
-                  <option value="reserve_orders">Hold stock until payment link expires</option>
+                  <option value="informational">Only Check What Is In Stock</option>
+                  <option value="reserve_orders">Hold Stock Until Payment Link Expires</option>
                 </select>
                 <p className="mt-1.5 text-xs text-gray-500">Whether inventory is reserved while customer completes hosted payment.</p>
               </div>
@@ -872,8 +879,8 @@ export default function ApprovalPoliciesPage() {
                   onChange={(e) => setSettings((s) => ({ ...s, provisionalOrdering: e.target.value }))}
                   className={selectClass}
                 >
-                  <option value="allow">Allowed immediately</option>
-                  <option value="block">Held until merchant approves</option>
+                  <option value="allow">Allowed Immediately</option>
+                  <option value="block">Held Until Merchant Approves</option>
                 </select>
                 <p className="mt-1.5 text-xs text-gray-500">Behavior when an agent creates a client on the spot.</p>
               </div>
@@ -949,6 +956,30 @@ export default function ApprovalPoliciesPage() {
                   />
                 )
               })}
+            </div>
+          </div>
+
+          {/* Roles shown */}
+          <div className="rounded-2xl border border-gray-200/90 bg-white p-6 shadow-xs">
+            <h2 className="text-base font-semibold text-gray-900 border-b border-gray-100 pb-3">Roles</h2>
+            <p className="pt-4 text-xs text-gray-500">
+              Turn a role off to hide it from the Roles page and from every place roles are picked. A role someone still holds can't be hidden.
+            </p>
+            <div className="grid gap-3 pt-4 sm:grid-cols-2">
+              {allRoles.map((r) => (
+                <ToggleSwitch
+                  key={r.key}
+                  checked={!settings.hiddenRoles.includes(r.key)}
+                  onChange={(checked) =>
+                    setSettings((s) => ({
+                      ...s,
+                      hiddenRoles: checked ? s.hiddenRoles.filter((k) => k !== r.key) : [...s.hiddenRoles, r.key],
+                    }))
+                  }
+                  label={r.name}
+                  description={r.memberCount ? r.memberCount + ' assigned' : 'Not assigned to anyone'}
+                />
+              ))}
             </div>
           </div>
 
@@ -1109,7 +1140,7 @@ export default function ApprovalPoliciesPage() {
                   <div className="w-full sm:flex-1">
                     <input
                       type="text"
-                      placeholder="SparkLayer Internal Name"
+                      placeholder="Appunik Wholesale Internal Name"
                       value={m.from}
                       onChange={(e) => setSettings((s) => ({ ...s, mappings: s.mappings.map((x, j) => (j === i ? { ...x, from: e.target.value } : x)) }))}
                       className={inputClass}

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
+import BackButton from '../../components/BackButton'
 import * as productsApi from '../../api/products.api'
 import * as priceListsApi from '../../api/priceLists.api'
 
@@ -8,14 +9,6 @@ const CURRENCY_SYMBOLS = { USD: 'US$', EUR: '€', GBP: '£', CAD: 'CA$', AUD: '
 function formatMoney(amount, currency) {
   const symbol = CURRENCY_SYMBOLS[currency] || `${currency} `
   return `${symbol}${Number(amount).toFixed(2)}`
-}
-
-function ChevronLeftIcon() {
-  return (
-    <svg className="h-4 w-4" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <path d="M12 15.5 7 10l5-5.5" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  )
 }
 
 function ExternalLinkIcon() {
@@ -442,13 +435,10 @@ export default function PriceEditorVariantPage() {
 
   return (
     <div>
-      <button
-        onClick={() => navigate('/price-editor')}
-        className="inline-flex items-center gap-1 text-sm text-gray-700 hover:underline"
-      >
-        <ChevronLeftIcon />
-        Price Editor
-      </button>
+      <div className="flex items-center gap-2">
+        <BackButton to="/price-editor" label="Back to price editor" />
+        <h1 className="text-2xl font-semibold text-gray-900">Price Editor</h1>
+      </div>
       <p className="mt-1 text-sm text-gray-500">Manage the B2B pricing for variant {product.sku}.</p>
 
       <section className="mt-6 rounded-xl border border-gray-200 bg-white p-4">

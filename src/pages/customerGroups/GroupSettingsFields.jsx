@@ -288,7 +288,7 @@ export function PriceListsSection({
       />
       <p className="mb-3 text-sm text-gray-500">
         Choose which price lists will be used for this customer group. If a product SKU exists in
-        multiple lists, SparkLayer uses the first one it finds.
+        multiple lists, Appunik Wholesale uses the first one it finds.
       </p>
       <div className="space-y-2">
         {shown.map((plId, i) => (

@@ -26,7 +26,7 @@ export default function ForgotPassword() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
       <div className="w-full max-w-sm rounded-xl border border-gray-200 bg-white p-8 shadow-sm">
-        <h1 className="mb-1 text-xl font-semibold text-gray-900">SparkLayer</h1>
+        <h1 className="mb-1 text-xl font-semibold text-gray-900">Appunik Wholesale</h1>
         <p className="mb-6 text-sm text-gray-500">
           Please enter your email address to reset your password.
         </p>

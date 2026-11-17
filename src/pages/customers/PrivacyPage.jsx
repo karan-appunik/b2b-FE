@@ -171,7 +171,7 @@ export default function PrivacyPage() {
 
   if (!policy) {
     return (
-      <div className="mx-auto flex h-64 w-full max-w-5xl items-center justify-center text-sm text-gray-500">
+      <div className="flex h-64 w-full items-center justify-center text-sm text-gray-500">
         <svg className="mr-2 h-5 w-5 animate-spin text-purple-600" viewBox="0 0 24 24" fill="none">
           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
@@ -182,7 +182,7 @@ export default function PrivacyPage() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-5xl space-y-6">
+    <div className="space-y-6">
       {/* Top Header Card */}
       <div className="flex flex-col gap-4 rounded-2xl border border-gray-200/90 bg-white p-6 shadow-xs sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -285,10 +285,10 @@ export default function PrivacyPage() {
                     min="30"
                     value={days[key] || ''}
                     onChange={(e) => setDays((d) => ({ ...d, [key]: e.target.value }))}
-                    className={inputClass}
+                    className={`${inputClass} pr-12 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
                     placeholder="30"
                   />
-                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3.5 text-xs text-gray-400">
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3.5 text-xs text-gray-400 font-medium select-none">
                     days
                   </div>
                 </div>

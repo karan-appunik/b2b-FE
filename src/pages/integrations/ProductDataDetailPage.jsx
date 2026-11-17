@@ -95,7 +95,7 @@ export default function ProductDataDetailPage() {
           <h1 className="text-2xl font-semibold text-gray-900">Product Data</h1>
         </div>
         <p className="mt-1 text-sm text-gray-500">
-          The product data SparkLayer holds for variant SKU &quot;{product.sku}&quot;.
+          The product data Appunik Wholesale holds for variant SKU &quot;{product.sku}&quot;.
         </p>
       </div>
 

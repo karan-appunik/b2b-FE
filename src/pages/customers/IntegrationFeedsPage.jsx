@@ -56,7 +56,7 @@ export default function IntegrationFeedsPage() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-5xl space-y-6">
+    <div className="space-y-6">
       <div className="rounded-2xl border border-gray-200/90 bg-white p-6 shadow-xs">
         <h1 className="text-2xl font-bold tracking-tight text-gray-900">CRM and commission feeds</h1>
         <p className="mt-1 max-w-2xl text-sm leading-relaxed text-gray-500">
@@ -66,11 +66,11 @@ export default function IntegrationFeedsPage() {
         <div className="mt-4 grid gap-4 sm:grid-cols-3">
           <label className="block text-sm">
             <span className="mb-1 block font-medium text-gray-700">From (quotes and commission)</span>
-            <input id="feed-from" type="date" value={from} onChange={(e) => setFrom(e.target.value)} className={inputClass} />
+            <input id="feed-from" type="date" value={from} onChange={(e) => setFrom(e.target.value)} className={`${inputClass} uppercase`} />
           </label>
           <label className="block text-sm">
             <span className="mb-1 block font-medium text-gray-700">To</span>
-            <input id="feed-to" type="date" value={to} onChange={(e) => setTo(e.target.value)} className={inputClass} />
+            <input id="feed-to" type="date" value={to} onChange={(e) => setTo(e.target.value)} className={`${inputClass} uppercase`} />
           </label>
           <label className="flex items-end gap-2 pb-2 text-sm text-gray-700">
             <input id="feed-names" type="checkbox" checked={names} onChange={(e) => setNames(e.target.checked)} />

@@ -26,36 +26,39 @@ export default function NewCustomersPage() {
   async function approve(id) {
     setError('')
     try {
-      await api.approve(id)
+      const result = await api.approve(id)
       await load()
+      if (result.tagRemoved === false) {
+        setError('Approved, but the provisional tag could not be removed in Shopify. Remove it there to move this customer to their final group.')
+      }
     } catch (err) {
       setError(err.response?.data?.message || 'Could not approve this customer.')
     }
   }
 
   return (
-    <div className="mx-auto w-full max-w-4xl">
+    <div className="w-full">
       <div className="mb-6">
         <h1 className="text-2xl font-semibold text-gray-900">New customers</h1>
         <p className="mt-1 text-sm text-gray-500">
           Accounts created by sales agents that are waiting for your approval. They carry the provisional tag set in Approval policies,
-          so the group for new accounts applies. Remove that tag in Shopify when you approve, to move them to their final group.
+          so the group for new accounts applies. Approving removes that tag in Shopify and moves them to their final group.
         </p>
       </div>
 
       {error && <p className="mb-3 text-sm text-red-600">{error}</p>}
 
-      <div className="space-y-3">
+      <div className="space-y-4">
         {customers.map((c) => (
-          <div key={c.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white p-4">
-            <div className="min-w-0 text-sm">
+          <div key={c.id} className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-gray-200 bg-white p-5 shadow-xs transition hover:border-gray-300">
+            <div className="min-w-0 space-y-2 text-sm">
               <div className="font-semibold text-gray-900">{c.company || c.name}</div>
-              <div className="text-gray-600">
+              <div className="text-sm leading-relaxed text-gray-600">
                 {c.name} · {c.email}
                 {c.phone ? ` · ${c.phone}` : ''}
                 {c.taxId ? ` · Tax ID ${c.taxId}` : ''}
               </div>
-              <div className="mt-0.5 text-xs text-gray-500">
+              <div className="text-xs leading-relaxed text-gray-500">
                 Created by {c.createdBy || 'an agent'} · {new Date(c.createdAt).toLocaleString()}
               </div>
             </div>

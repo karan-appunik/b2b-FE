@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
+import BackButton from '../../components/BackButton'
 import * as discountsApi from '../../api/discounts.api'
 import * as customerGroupsApi from '../../api/customerGroups.api'
 import * as productsApi from '../../api/products.api'
@@ -778,22 +779,20 @@ export default function DiscountDetailPage() {
 
   if (!loaded) {
     return (
-      <div className="mx-auto max-w-3xl">
-        <Link to="/discounts" className="text-sm text-purple-600 hover:underline">
-          ‹ Discounts
-        </Link>
+      <div className="w-full">
+        <BackButton to="/discounts" label="Back to discounts" />
         <p className="mt-6 text-sm text-gray-500">Loading…</p>
       </div>
     )
   }
 
   return (
-    <div className="mx-auto max-w-3xl">
-      <Link to="/discounts" className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700">
-        ‹ Discounts
-      </Link>
-      <div className="mt-1 flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-gray-900">Edit Discount</h1>
+    <div className="w-full">
+            <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <BackButton to="/discounts" label="Back to discounts" />
+          <h1 className="text-2xl font-semibold text-gray-900">Edit Discount</h1>
+        </div>
         <button
           onClick={handleDelete}
           className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-red-600 hover:bg-gray-50"
@@ -1114,8 +1113,8 @@ export default function DiscountDetailPage() {
                           className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none"
                         >
                           <option value="percentage">Percentage</option>
-                          <option value="fixed">Fixed amount</option>
-                          {reward.type === 'shipping' && <option value="set_cost">Set cost (exact price)</option>}
+                          <option value="fixed">Fixed Amount</option>
+                          {reward.type === 'shipping' && <option value="set_cost">Set Cost (Exact Price)</option>}
                           {reward.type === 'shipping' && <option value="free">Free</option>}
                         </select>
                       </div>
@@ -1650,7 +1649,7 @@ export default function DiscountDetailPage() {
                       type="date"
                       value={startsAt}
                       onChange={(e) => setStartsAt(e.target.value)}
-                      className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none"
+                      className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm uppercase focus:border-purple-500 focus:outline-none"
                     />
                   </div>
                   <div>
@@ -1659,7 +1658,7 @@ export default function DiscountDetailPage() {
                       type="date"
                       value={endsAt}
                       onChange={(e) => setEndsAt(e.target.value)}
-                      className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none"
+                      className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm uppercase focus:border-purple-500 focus:outline-none"
                     />
                   </div>
                 </div>
