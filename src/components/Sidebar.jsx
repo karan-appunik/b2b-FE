@@ -1,12 +1,230 @@
 import { useEffect, useRef, useState } from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
-const links = [
-  { to: '/', label: 'Dashboard', end: true },
-  { to: '/products', label: 'Products' },
-  { to: '/customers', label: 'Customers' },
-  { to: '/price-lists', label: 'Price Lists' },
+function HomeIcon() {
+  return (
+    <svg
+      className="h-4 w-4 shrink-0"
+      viewBox="0 0 24 24"
+      fill="none"
+      strokeWidth="1.5"
+      stroke="currentColor"
+      aria-hidden="true"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
+      />
+    </svg>
+  )
+}
+
+function ActivityIcon() {
+  return (
+    <svg
+      className="h-4 w-4 shrink-0"
+      viewBox="0 0 24 24"
+      fill="none"
+      strokeWidth="1.5"
+      stroke="currentColor"
+      aria-hidden="true"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"
+      />
+    </svg>
+  )
+}
+
+function TagIcon() {
+  return (
+    <svg
+      className="h-4 w-4 shrink-0"
+      viewBox="0 0 24 24"
+      fill="none"
+      strokeWidth="1.5"
+      stroke="currentColor"
+      aria-hidden="true"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+      />
+    </svg>
+  )
+}
+
+function UsersIcon() {
+  return (
+    <svg
+      className="h-4 w-4 shrink-0"
+      viewBox="0 0 24 24"
+      fill="none"
+      strokeWidth="1.5"
+      stroke="currentColor"
+      aria-hidden="true"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z"
+      />
+    </svg>
+  )
+}
+
+function FormsIcon() {
+  return (
+    <svg
+      className="h-4 w-4 shrink-0"
+      viewBox="0 0 24 24"
+      fill="none"
+      strokeWidth="1.5"
+      stroke="currentColor"
+      aria-hidden="true"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
+      />
+    </svg>
+  )
+}
+
+function IntegrationsIcon() {
+  return (
+    <svg
+      className="h-4 w-4 shrink-0"
+      viewBox="0 0 24 24"
+      fill="none"
+      strokeWidth="1.5"
+      stroke="currentColor"
+      aria-hidden="true"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244"
+      />
+    </svg>
+  )
+}
+
+function QuotesIcon() {
+  return (
+    <svg
+      className="h-4 w-4 shrink-0"
+      viewBox="0 0 24 24"
+      fill="none"
+      strokeWidth="1.5"
+      stroke="currentColor"
+      aria-hidden="true"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
+      />
+    </svg>
+  )
+}
+
+function SettingsIcon() {
+  return (
+    <svg
+      className="h-4 w-4 shrink-0"
+      viewBox="0 0 24 24"
+      fill="none"
+      strokeWidth="1.5"
+      stroke="currentColor"
+      aria-hidden="true"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.6 6.6 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z"
+      />
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+      />
+    </svg>
+  )
+}
+
+const topLinks = [
+  { to: '/', label: 'Home', end: true, icon: HomeIcon },
+]
+
+const navGroups = [
+  {
+    label: 'Activity',
+    icon: ActivityIcon,
+    links: [
+      { to: '/activity', label: 'Order activity', end: true },
+      { to: '/customers/agent-activity', label: 'Agent activity' },
+      { to: '/customers/agent-reports', label: 'Agent reports' },
+    ],
+  },
+  {
+    label: 'Pricing',
+    icon: TagIcon,
+    links: [
+      { to: '/price-lists', label: 'Price lists' },
+      { to: '/price-editor', label: 'Price editor' },
+      { to: '/discounts', label: 'Discounts' },
+    ],
+  },
+  {
+    label: 'Customers',
+    icon: UsersIcon,
+    links: [
+      { to: '/customers', label: 'Customers', end: true },
+      { to: '/customers/new-customers', label: 'New customers' },
+      { to: '/customers/agents', label: 'Agents' },
+      { to: '/customers/groups', label: 'Groups' },
+      { to: '/customers/roles', label: 'Roles' },
+    ],
+  },
+  {
+    label: 'Quotes & Approvals',
+    icon: QuotesIcon,
+    links: [
+      { to: '/customers/quotes', label: 'Quotes' },
+      { to: '/customers/approvals', label: 'Approvals' },
+      { to: '/customers/delegations', label: 'Delegations' },
+      { to: '/customers/payment-links', label: 'Payment links' },
+    ],
+  },
+  {
+    label: 'Forms',
+    icon: FormsIcon,
+    links: [{ to: '/forms', label: 'Forms', end: true }],
+  },
+  {
+    label: 'Integrations',
+    icon: IntegrationsIcon,
+    links: [
+      { to: '/integrations/products-sync', label: 'Product sync' },
+      { to: '/integrations/feeds', label: 'CRM and commission' },
+    ],
+  },
+  {
+    label: 'Settings',
+    icon: SettingsIcon,
+    links: [
+      { to: '/customers/approval-policies', label: 'Approval policies' },
+      { to: '/customers/territories', label: 'Territories' },
+      { to: '/customers/privacy', label: 'Privacy and retention' },
+    ],
+  },
 ]
 
 function getInitials(user) {
@@ -15,6 +233,72 @@ function getInitials(user) {
     return (parts[0][0] + (parts[1]?.[0] || '')).toUpperCase()
   }
   return user?.email?.[0]?.toUpperCase() || '?'
+}
+
+function ChevronIcon({ open }) {
+  return (
+    <svg
+      className={`h-5 w-5 shrink-0 text-slate-400 transition-transform ${open ? 'rotate-180' : ''}`}
+      viewBox="0 0 20 20"
+      fill="currentColor"
+    >
+      <path
+        fillRule="evenodd"
+        d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+        clipRule="evenodd"
+      />
+    </svg>
+  )
+}
+
+function NavGroup({ group, onNavigate }) {
+  const location = useLocation()
+  const hasActiveChild = group.links.some((l) =>
+    l.end ? location.pathname === l.to : location.pathname.startsWith(l.to),
+  )
+  const [open, setOpen] = useState(hasActiveChild)
+  const Icon = group.icon
+
+  useEffect(() => {
+    if (hasActiveChild) setOpen(true)
+  }, [hasActiveChild])
+
+  return (
+    <li>
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className="flex w-full cursor-pointer items-center justify-between rounded-xl px-3 py-2 text-sm font-medium text-slate-300 hover:bg-white/10 hover:text-white"
+      >
+        <span className="flex min-w-0 items-center gap-2">
+          <Icon />
+          <span className="truncate whitespace-nowrap">{group.label}</span>
+        </span>
+        <ChevronIcon open={open} />
+      </button>
+      {open && (
+        <ul className="mt-1 space-y-1 pl-3">
+          {group.links.map((link) => (
+            <li key={link.to}>
+              <NavLink
+                to={link.to}
+                end={link.end}
+                onClick={onNavigate}
+                className={({ isActive }) =>
+                  `block truncate whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium ${
+                    isActive
+                      ? 'bg-blue-600 text-white shadow-sm'
+                      : 'text-slate-300 hover:bg-white/10 hover:text-white'
+                  }`
+                }
+              >
+                {link.label}
+              </NavLink>
+            </li>
+          ))}
+        </ul>
+      )}
+    </li>
+  )
 }
 
 function UserMenu() {
@@ -33,14 +317,14 @@ function UserMenu() {
   }, [])
 
   return (
-    <div ref={ref} className="relative mt-auto border-t border-gray-200 pt-3">
+    <div ref={ref} className="relative">
       {open && (
-        <div className="absolute bottom-full left-0 right-0 mb-2 overflow-hidden rounded-lg border border-gray-200 bg-white py-1 shadow-lg">
+        <div className="absolute bottom-full left-0 right-0 mb-2 overflow-hidden rounded-xl border border-slate-700 bg-slate-800 py-1 shadow-lg">
           <button
             onClick={logout}
-            className="flex w-full cursor-pointer items-center gap-2 px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
+            className="flex w-full cursor-pointer items-center gap-2 px-3 py-2 text-left text-sm text-slate-200 hover:bg-white/10"
           >
-            <svg className="h-4 w-4 shrink-0 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+            <svg className="h-4 w-4 shrink-0 text-slate-400" viewBox="0 0 20 20" fill="currentColor">
               <path
                 fillRule="evenodd"
                 d="M3 4.25A2.25 2.25 0 0 1 5.25 2h5.5A2.25 2.25 0 0 1 13 4.25v2a.75.75 0 0 1-1.5 0v-2a.75.75 0 0 0-.75-.75h-5.5a.75.75 0 0 0-.75.75v11.5c0 .414.336.75.75.75h5.5a.75.75 0 0 0 .75-.75v-2a.75.75 0 0 1 1.5 0v2A2.25 2.25 0 0 1 10.75 18h-5.5A2.25 2.25 0 0 1 3 15.75V4.25Z"
@@ -58,23 +342,23 @@ function UserMenu() {
       )}
       <button
         onClick={() => setOpen((o) => !o)}
-        className={`flex w-full cursor-pointer items-center gap-2 rounded-lg border px-2 py-2 text-left transition-colors ${
+        className={`flex w-full cursor-pointer items-center gap-2 rounded-xl border px-2 py-2 text-left transition-colors ${
           open
-            ? 'border-gray-300 bg-gray-50'
-            : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'
+            ? 'border-slate-600 bg-slate-800'
+            : 'border-slate-700/60 bg-slate-800/60 hover:border-slate-600 hover:bg-slate-800'
         }`}
       >
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-purple-600 text-xs font-semibold text-white">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-600 text-xs font-semibold text-white">
           {getInitials(user)}
         </span>
         <span className="min-w-0 flex-1">
-          <span className="block truncate text-sm font-medium text-gray-900">
+          <span className="block truncate text-sm font-semibold text-white">
             {user?.name || 'Account'}
           </span>
-          <span className="block truncate text-xs text-gray-500">{user?.email}</span>
+          <span className="block truncate text-xs text-slate-400">{user?.email}</span>
         </span>
         <svg
-          className={`h-4 w-4 shrink-0 text-gray-400 transition-transform ${open ? 'rotate-180' : ''}`}
+          className={`h-4 w-4 shrink-0 text-slate-400 transition-transform ${open ? 'rotate-180' : ''}`}
           viewBox="0 0 20 20"
           fill="currentColor"
         >
@@ -89,30 +373,63 @@ function UserMenu() {
   )
 }
 
-export default function Sidebar() {
+export default function Sidebar({ isOpen = false, onClose = () => {} }) {
+  const { user } = useAuth()
+
   return (
-    <nav className="flex w-56 shrink-0 flex-col border-r border-gray-200 bg-white p-4">
-      <div className="mb-6 px-2 text-lg font-semibold text-gray-900">SparkLayer</div>
-      <ul className="space-y-1">
-        {links.map((link) => (
-          <li key={link.to}>
-            <NavLink
-              to={link.to}
-              end={link.end}
-              className={({ isActive }) =>
-                `block rounded-md px-3 py-2 text-sm font-medium ${
-                  isActive
-                    ? 'bg-purple-50 text-purple-700'
-                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                }`
-              }
-            >
-              {link.label}
-            </NavLink>
-          </li>
-        ))}
-      </ul>
-      <UserMenu />
-    </nav>
+    <>
+      {isOpen && (
+        <div
+          onClick={onClose}
+          className="fixed inset-0 z-40 bg-black/40 lg:hidden"
+          aria-hidden="true"
+        />
+      )}
+      <nav
+        className={`fixed inset-y-0 left-0 z-50 flex h-screen w-[255px] shrink-0 flex-col border-r border-slate-800 bg-[#0f172a] text-slate-200 dark:bg-[#111c33] transition-transform duration-200 lg:sticky lg:top-0 lg:translate-x-0 ${
+          isOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
+        <div className="flex-1 overflow-y-auto p-4">
+          <div className="mb-6 flex items-center gap-3 rounded-xl border border-slate-700/60 bg-slate-800/80 px-3 py-3">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-blue-600 text-base font-extrabold text-white shadow-sm">
+              S
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-bold tracking-tight text-white">Wholesale</p>
+              {user?.shop && <p className="truncate text-[11px] text-slate-400">{user.shop}</p>}
+            </div>
+            <ChevronIcon open={false} />
+          </div>
+          <ul className="space-y-1">
+            {topLinks.map((link) => (
+              <li key={link.to}>
+                <NavLink
+                  to={link.to}
+                  end={link.end}
+                  onClick={onClose}
+                  className={({ isActive }) =>
+                    `flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium ${
+                      isActive
+                        ? 'bg-blue-600 font-bold text-white shadow-sm'
+                        : 'text-slate-300 hover:bg-white/10 hover:text-white'
+                    }`
+                  }
+                >
+                  <link.icon />
+                  <span className="truncate whitespace-nowrap">{link.label}</span>
+                </NavLink>
+              </li>
+            ))}
+            {navGroups.map((group) => (
+              <NavGroup key={group.label} group={group} onNavigate={onClose} />
+            ))}
+          </ul>
+        </div>
+        <div className="shrink-0 border-t border-slate-800 p-4">
+          <UserMenu />
+        </div>
+      </nav>
+    </>
   )
 }

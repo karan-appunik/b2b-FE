@@ -33,13 +33,18 @@ export function AuthProvider({ children }) {
     setUser(data.user)
   }
 
+  function loginWithToken(token) {
+    localStorage.setItem(TOKEN_KEY, token)
+    return authApi.getMe().then((data) => setUser(data.user))
+  }
+
   function logout() {
     localStorage.removeItem(TOKEN_KEY)
     setUser(null)
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, register, loginWithToken, logout }}>
       {children}
     </AuthContext.Provider>
   )

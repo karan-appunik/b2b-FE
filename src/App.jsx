@@ -3,27 +3,97 @@ import ProtectedRoute from './routes/ProtectedRoute'
 import Layout from './components/Layout'
 import Login from './pages/Login'
 import Register from './pages/Register'
+import Sso from './pages/Sso'
+import ForgotPassword from './pages/ForgotPassword'
+import ResetPassword from './pages/ResetPassword'
 import Dashboard from './pages/Dashboard'
-import ProductsPage from './pages/products/ProductsPage'
+import Activity from './pages/Activity'
 import CustomersPage from './pages/customers/CustomersPage'
+import CustomerDetailPage from './pages/customers/CustomerDetailPage'
+import AgentsPage from './pages/customers/AgentsPage'
+import RolesPage from './pages/customers/RolesPage'
+import RoleEditorPage from './pages/customers/RoleEditorPage'
+import ApprovalsPage from './pages/customers/ApprovalsPage'
+import DelegationsPage from './pages/customers/DelegationsPage'
+import IntegrationFeedsPage from './pages/customers/IntegrationFeedsPage'
+import QuotesPage from './pages/customers/QuotesPage'
+import PaymentLinksPage from './pages/customers/PaymentLinksPage'
+import NewCustomersPage from './pages/customers/NewCustomersPage'
+import AgentReportsPage from './pages/customers/AgentReportsPage'
+import TerritoriesPage from './pages/customers/TerritoriesPage'
+import AgentActivityPage from './pages/customers/AgentActivityPage'
+import PrivacyPage from './pages/customers/PrivacyPage'
+import ApprovalPoliciesPage from './pages/customers/ApprovalPoliciesPage'
+import CustomerGroupsPage from './pages/customerGroups/CustomerGroupsPage'
+import CustomerGroupCreatePage from './pages/customerGroups/CustomerGroupCreatePage'
+import CustomerGroupDetailPage from './pages/customerGroups/CustomerGroupDetailPage'
 import PriceListsPage from './pages/priceLists/PriceListsPage'
 import PriceListCreatePage from './pages/priceLists/PriceListCreatePage'
 import PriceListDetailPage from './pages/priceLists/PriceListDetailPage'
+import DiscountsPage from './pages/discounts/DiscountsPage'
+import DiscountCreatePage from './pages/discounts/DiscountCreatePage'
+import DiscountDetailPage from './pages/discounts/DiscountDetailPage'
+import DiscountPrioritiesPage from './pages/discounts/DiscountPrioritiesPage'
+import PriceEditorPage from './pages/priceEditor/PriceEditorPage'
+import PriceEditorVariantPage from './pages/priceEditor/PriceEditorVariantPage'
+import FormsPage from './pages/forms/FormsPage'
+import CreateFormPage from './pages/forms/CreateFormPage'
+import FormEditPage from './pages/forms/FormEditPage'
+import FormEntriesPage from './pages/forms/FormEntriesPage'
+import FormEntryDetailPage from './pages/forms/FormEntryDetailPage'
+import ProductSyncPage from './pages/integrations/ProductSyncPage'
+import ProductDataDetailPage from './pages/integrations/ProductDataDetailPage'
 
 function App() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/sso" element={<Sso />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
 
       <Route element={<ProtectedRoute />}>
         <Route element={<Layout />}>
           <Route path="/" element={<Dashboard />} />
-          <Route path="/products" element={<ProductsPage />} />
+          <Route path="/activity" element={<Activity />} />
+          <Route path="/products" element={<Navigate to="/integrations/products-sync" replace />} />
           <Route path="/customers" element={<CustomersPage />} />
+          <Route path="/customers/agents" element={<AgentsPage />} />
+          <Route path="/customers/roles" element={<RolesPage />} />
+          <Route path="/customers/roles/new" element={<RoleEditorPage />} />
+          <Route path="/customers/roles/:key" element={<RoleEditorPage />} />
+          <Route path="/customers/approvals" element={<ApprovalsPage />} />
+          <Route path="/customers/delegations" element={<DelegationsPage />} />
+          <Route path="/integrations/feeds" element={<IntegrationFeedsPage />} />
+          <Route path="/customers/quotes" element={<QuotesPage />} />
+          <Route path="/customers/payment-links" element={<PaymentLinksPage />} />
+          <Route path="/customers/new-customers" element={<NewCustomersPage />} />
+          <Route path="/customers/agent-reports" element={<AgentReportsPage />} />
+          <Route path="/customers/territories" element={<TerritoriesPage />} />
+          <Route path="/customers/agent-activity" element={<AgentActivityPage />} />
+          <Route path="/customers/privacy" element={<PrivacyPage />} />
+          <Route path="/customers/approval-policies" element={<ApprovalPoliciesPage />} />
+          <Route path="/customers/:id" element={<CustomerDetailPage />} />
+          <Route path="/customers/groups" element={<CustomerGroupsPage />} />
+          <Route path="/customers/groups/create" element={<CustomerGroupCreatePage />} />
+          <Route path="/customers/groups/:id" element={<CustomerGroupDetailPage />} />
           <Route path="/price-lists" element={<PriceListsPage />} />
           <Route path="/price-lists/create" element={<PriceListCreatePage />} />
           <Route path="/price-lists/:id" element={<PriceListDetailPage />} />
+          <Route path="/discounts" element={<DiscountsPage />} />
+          <Route path="/discounts/create" element={<DiscountCreatePage />} />
+          <Route path="/discounts/priorities" element={<DiscountPrioritiesPage />} />
+          <Route path="/discounts/:id" element={<DiscountDetailPage />} />
+          <Route path="/price-editor" element={<PriceEditorPage />} />
+          <Route path="/price-editor/:id" element={<PriceEditorVariantPage />} />
+          <Route path="/forms" element={<FormsPage />} />
+          <Route path="/forms/new" element={<CreateFormPage />} />
+          <Route path="/forms/:id" element={<FormEditPage />} />
+          <Route path="/forms/:id/entries" element={<FormEntriesPage />} />
+          <Route path="/forms/:id/entries/:entryId" element={<FormEntryDetailPage />} />
+          <Route path="/integrations/products-sync" element={<ProductSyncPage />} />
+          <Route path="/integrations/products-sync/:id" element={<ProductDataDetailPage />} />
         </Route>
       </Route>
 
