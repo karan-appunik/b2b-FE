@@ -107,7 +107,7 @@ function MoreActionsMenu({ onDownload, onClear, onDelete }) {
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-1 rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+        className="flex items-center gap-2 rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
       >
         More actions
         <svg className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
@@ -221,7 +221,7 @@ export default function PriceListDetailPage() {
   }
 
   return (
-    <div className="mx-auto max-w-[672px]">
+    <div className="w-full">
       <div>
         <div className="flex flex-wrap items-center justify-between gap-2">
           <Link
@@ -315,8 +315,8 @@ export default function PriceListDetailPage() {
                   }
                   className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none"
                 >
-                  <option value="percentage">Percentage off</option>
-                  <option value="fixed">Fixed amount off</option>
+                  <option value="percentage">Percentage Off</option>
+                  <option value="fixed">Fixed Amount Off</option>
                 </select>
               </div>
               <div>

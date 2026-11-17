@@ -1,5 +1,20 @@
 @import "tailwindcss";
 
+/* Deep Navy theme: the app's accent colour (written as purple across pages) is
+   blue. Remapping the palette here recolours every purple-* class at once. */
+@theme {
+  --color-purple-50: var(--color-blue-50);
+  --color-purple-100: var(--color-blue-100);
+  --color-purple-200: var(--color-blue-200);
+  --color-purple-300: var(--color-blue-300);
+  --color-purple-400: var(--color-blue-400);
+  --color-purple-500: var(--color-blue-500);
+  --color-purple-600: var(--color-blue-600);
+  --color-purple-700: var(--color-blue-700);
+  --color-purple-800: var(--color-blue-800);
+  --color-purple-900: var(--color-blue-900);
+}
+
 body {
   margin: 0;
   font-family:
@@ -15,4 +30,115 @@ body {
 
 button:not(:disabled) {
   cursor: pointer;
+}
+
+/* Global dropdown/select styling with clean spacing and chevron */
+select:not(.appearance-none) {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.75rem center;
+  background-repeat: no-repeat;
+  background-size: 1.15rem 1.15rem;
+  padding-right: 2.5rem !important;
+}
+
+select:not(.appearance-none):disabled {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+}
+
+select:not(:disabled) {
+  cursor: pointer;
+}
+
+/* Remove default browser blue focus outlines */
+input:focus,
+input:focus-visible,
+select:focus,
+select:focus-visible,
+textarea:focus,
+textarea:focus-visible {
+  outline: none;
+}
+
+/* Capitalize date/time input format (MM/DD/YYYY) across the application */
+input[type="date"],
+input[type="datetime-local"],
+input[type="month"],
+input[type="time"] {
+  text-transform: uppercase;
+}
+
+input[type="date"]::-webkit-datetime-edit,
+input[type="date"]::-webkit-datetime-edit-fields-wrapper,
+input[type="date"]::-webkit-datetime-edit-text,
+input[type="date"]::-webkit-datetime-edit-month-field,
+input[type="date"]::-webkit-datetime-edit-day-field,
+input[type="date"]::-webkit-datetime-edit-year-field,
+input[type="datetime-local"]::-webkit-datetime-edit,
+input[type="datetime-local"]::-webkit-datetime-edit-fields-wrapper,
+input[type="datetime-local"]::-webkit-datetime-edit-text,
+input[type="datetime-local"]::-webkit-datetime-edit-month-field,
+input[type="datetime-local"]::-webkit-datetime-edit-day-field,
+input[type="datetime-local"]::-webkit-datetime-edit-year-field {
+  text-transform: uppercase;
+}
+
+/* Dark mode: toggled by the sidebar (adds .dark to <html>). Tailwind's utilities
+   read the gray scale from variables, so flipping the scale darkens the text,
+   borders and panels on every page; white surfaces are set explicitly because
+   text-white (on buttons) must stay white. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root.dark {
+  color-scheme: dark;
+  --color-gray-50: #26354d;
+  --color-gray-100: #2d3d57;
+  --color-gray-200: #3d4d68;
+  --color-gray-300: #566783;
+  --color-gray-400: #64748b;
+  --color-gray-500: #94a3b8;
+  --color-gray-600: #aab6c9;
+  --color-gray-700: #cbd5e1;
+  --color-gray-800: #e2e8f0;
+  --color-gray-900: #f1f5f9;
+  --color-slate-50: #0f172a;
+}
+
+.dark body {
+  background-color: #0f172a;
+  color: #e2e8f0;
+}
+
+.dark .bg-white {
+  background-color: #1e293b;
+}
+
+.dark .bg-white/80,
+.dark .bg-white/90 {
+  background-color: rgb(30 41 59 / 0.9);
+}
+
+.dark input,
+.dark select,
+.dark textarea {
+  color: #e2e8f0;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #64748b;
+}
+
+/* Chart lines are drawn with fixed light greys; darken them in dark mode. */
+.dark svg line[stroke="#e5e7eb"] {
+  stroke: #334155;
+}
+
+.dark svg line[stroke="#d1d5db"] {
+  stroke: #475569;
+}
+
+.dark svg circle[stroke="#fff"] {
+  stroke: #1e293b;
 }

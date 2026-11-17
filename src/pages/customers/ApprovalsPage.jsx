@@ -10,8 +10,8 @@ import {
 } from '../../utils/overrides'
 
 const FILTERS = [
-  { value: 'PENDING_APPROVAL', label: 'Waiting for approval' },
-  { value: 'all', label: 'All requests' },
+  { value: 'PENDING_APPROVAL', label: 'Waiting for Approval' },
+  { value: 'all', label: 'All Requests' },
 ]
 
 // The approval queue (spec §8.4): what was asked, against which baseline, why
@@ -61,7 +61,7 @@ export default function ApprovalsPage() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-5xl">
+    <div className="w-full">
       <div className="mb-6">
         <h1 className="text-2xl font-semibold text-gray-900">Approvals</h1>
         <p className="mt-1 text-sm text-gray-500">
@@ -85,56 +85,58 @@ export default function ApprovalsPage() {
 
       {error && <p className="mb-3 text-sm text-red-600">{error}</p>}
 
-      <div className="space-y-3">
+      <div className="space-y-4">
         {items.map((a) => (
-          <div key={a._id} className="rounded-xl border border-gray-200 bg-white p-4">
-            <div className="flex flex-wrap items-start justify-between gap-3">
-              <div className="min-w-0">
-                <div className="text-sm font-semibold text-gray-900">
-                  {TYPE_LABELS[a.type] || a.type}
+          <div key={a._id} className="rounded-xl border border-gray-200 bg-white p-5 shadow-xs transition hover:border-gray-300">
+            <div className="flex flex-wrap items-start justify-between gap-4">
+              <div className="min-w-0 space-y-1.5">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-sm font-semibold text-gray-900">{TYPE_LABELS[a.type] || a.type}</span>
                   <span
-                    className={`ml-2 rounded-full px-2 py-0.5 text-xs font-medium ${
+                    className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
                       STATUS_STYLES[a.status] || 'bg-gray-100 text-gray-500'
                     }`}
                   >
                     {STATUS_LABELS[a.status] || a.status}
                   </span>
                 </div>
-                <div className="mt-1 text-sm text-gray-600">
+                <div className="text-sm leading-relaxed text-gray-600">
                   {a.agentName || 'An agent'} for{' '}
-                  <strong>{a.customerName || 'a customer'}</strong>
+                  <strong className="text-gray-900">{a.customerName || 'a customer'}</strong>
                   {a.customerCompany ? ` (${a.customerCompany})` : ''}
                 </div>
               </div>
-              <div className="text-right text-sm">
-                <div className="text-gray-500">Baseline</div>
-                <div className="font-medium text-gray-900">{formatMoney(a.baseline)}</div>
-              </div>
-              <div className="text-right text-sm">
-                <div className="text-gray-500">Requested</div>
-                <div className="font-medium text-gray-900">{formatMoney(a.proposed)}</div>
-              </div>
-              <div className="text-right text-sm">
-                <div className="text-gray-500">Reduction</div>
-                <div className="font-medium text-gray-900">{formatDelta(a.deltaPercent)}</div>
+              <div className="flex flex-wrap items-center gap-6">
+                <div className="text-right text-sm space-y-0.5">
+                  <div className="text-xs text-gray-500">Baseline</div>
+                  <div className="font-medium text-gray-900">{formatMoney(a.baseline)}</div>
+                </div>
+                <div className="text-right text-sm space-y-0.5">
+                  <div className="text-xs text-gray-500">Requested</div>
+                  <div className="font-medium text-gray-900">{formatMoney(a.proposed)}</div>
+                </div>
+                <div className="text-right text-sm space-y-0.5">
+                  <div className="text-xs text-gray-500">Reduction</div>
+                  <div className="font-medium text-gray-900">{formatDelta(a.deltaPercent)}</div>
+                </div>
               </div>
             </div>
 
             {a.custom && (
-              <p className="mt-3 text-sm text-gray-700">
+              <p className="mt-4 border-t border-gray-100 pt-3 text-sm leading-relaxed text-gray-700">
                 Custom line: <strong>{a.custom.title}</strong> × {a.custom.quantity} at {formatMoney(a.proposed)} each
                 {a.custom.taxable === false ? ' · not taxed' : a.custom.taxCode ? ` · tax code ${a.custom.taxCode}` : ''}
                 {a.custom.accountingCode ? ` · accounting code ${a.custom.accountingCode}` : ''}
               </p>
             )}
             {a.address && (
-              <p className="mt-3 text-sm text-gray-700">
+              <p className="mt-4 border-t border-gray-100 pt-3 text-sm leading-relaxed text-gray-700">
                 Ship to: {[a.address.company, a.address.address1, a.address.address2, a.address.city, a.address.provinceCode, a.address.zip, a.address.countryCode].filter(Boolean).join(', ')}
                 <span className="text-gray-500"> (this order only, not saved to the customer)</span>
               </p>
             )}
             {a.type === 'QUANTITY_RULE' && a.rule && (
-              <p className="mt-3 text-sm text-gray-700">
+              <p className="mt-4 border-t border-gray-100 pt-3 text-sm leading-relaxed text-gray-700">
                 {a.rule === 'INCREMENT' ? 'Relaxes the pack size' : 'Relaxes the minimum quantity'}
               </p>
             )}

@@ -211,11 +211,11 @@ export default function AgentAccessSection({ agent }) {
           </label>
           <label className="text-sm">
             <span className="mb-1 block font-medium text-gray-700">Starts (optional)</span>
-            <input type="date" value={form.validFrom} onChange={(e) => setField('validFrom', e.target.value)} className={inputClass} />
+            <input type="date" value={form.validFrom} onChange={(e) => setField('validFrom', e.target.value)} className={`${inputClass} uppercase`} />
           </label>
           <label className="text-sm">
             <span className="mb-1 block font-medium text-gray-700">Ends (optional)</span>
-            <input type="date" value={form.validTo} onChange={(e) => setField('validTo', e.target.value)} className={inputClass} />
+            <input type="date" value={form.validTo} onChange={(e) => setField('validTo', e.target.value)} className={`${inputClass} uppercase`} />
           </label>
         </div>
 
@@ -264,37 +264,37 @@ export default function AgentAccessSection({ agent }) {
         <table className="w-full text-left text-sm">
           <thead className="border-b border-gray-200 bg-gray-50 text-gray-500">
             <tr>
-              <th className="px-4 py-2 font-medium">Applies to</th>
-              <th className="px-4 py-2 font-medium">Rule</th>
-              <th className="px-4 py-2 font-medium">Dates</th>
-              <th className="px-4 py-2 font-medium">Status</th>
-              <th className="px-4 py-2"><span className="sr-only">Actions</span></th>
+              <th className="px-4 py-3 font-medium">Applies to</th>
+              <th className="px-4 py-3 font-medium">Rule</th>
+              <th className="px-4 py-3 font-medium">Dates</th>
+              <th className="px-4 py-3 font-medium">Status</th>
+              <th className="px-4 py-3"><span className="sr-only">Actions</span></th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
             {grants.map((g) => (
               <tr key={g._id}>
-                <td className="px-4 py-2">
-                  <span className="block text-gray-900">{targetName(g)}</span>
-                  <span className="block text-xs text-gray-400">{SCOPE_LABELS[g.scopeType] || 'All'}</span>
+                <td className="px-4 py-3.5">
+                  <span className="block font-medium text-gray-900">{targetName(g)}</span>
+                  <span className="mt-0.5 block text-xs text-gray-400">{SCOPE_LABELS[g.scopeType] || 'All'}</span>
                 </td>
-                <td className="px-4 py-2">
+                <td className="px-4 py-3.5">
                   <span
-                    className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
+                    className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${
                       g.effect === 'deny' ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700'
                     }`}
                   >
                     {g.effect === 'deny' ? 'Deny' : 'Allow'}
                   </span>
                 </td>
-                <td className="px-4 py-2 text-gray-500">
+                <td className="px-4 py-3.5 text-gray-500">
                   {formatDate(g.validFrom) || 'Any time'} → {formatDate(g.validTo) || 'No end'}
                 </td>
-                <td className="px-4 py-2 text-gray-500">{grantStatus(g)}</td>
-                <td className="px-4 py-2 text-right">
+                <td className="px-4 py-3.5 text-gray-500">{grantStatus(g)}</td>
+                <td className="px-4 py-3.5 text-right">
                   <button
                     onClick={() => handleRemove(g._id)}
-                    className="rounded-md border border-gray-300 px-3 py-1 text-xs text-gray-700 hover:bg-gray-50"
+                    className="rounded-md border border-gray-300 px-3 py-1.5 text-xs text-gray-700 hover:bg-gray-50 cursor-pointer"
                   >
                     Remove
                   </button>

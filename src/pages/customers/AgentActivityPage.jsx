@@ -4,7 +4,7 @@ import * as customersApi from '../../api/customers.api'
 import { isAgentRole } from '../../utils/roles'
 
 const OUTCOMES = [
-  { value: '', label: 'Any result' },
+  { value: '', label: 'Any Result' },
   { value: 'success', label: 'Worked' },
   { value: 'denied', label: 'Refused' },
   { value: 'failure', label: 'Failed' },
@@ -12,16 +12,16 @@ const OUTCOMES = [
 
 const GROUPS = [
   { value: '', label: 'Everything' },
-  { value: 'context.entered', label: 'Customer entered' },
-  { value: 'context.denied', label: 'Customer refused' },
-  { value: 'override.requested', label: 'Exception requested' },
-  { value: 'override.decided', label: 'Exception decided' },
-  { value: 'quote.created', label: 'Quote created' },
-  { value: 'quote.sent', label: 'Quote sent' },
-  { value: 'order.attributed', label: 'Order placed' },
-  { value: 'payment_link.created', label: 'Payment link sent' },
-  { value: 'customer.created', label: 'Customer created' },
-  { value: 'audit.exported', label: 'Activity exported' },
+  { value: 'context.entered', label: 'Customer Entered' },
+  { value: 'context.denied', label: 'Customer Refused' },
+  { value: 'override.requested', label: 'Exception Requested' },
+  { value: 'override.decided', label: 'Exception Decided' },
+  { value: 'quote.created', label: 'Quote Created' },
+  { value: 'quote.sent', label: 'Quote Sent' },
+  { value: 'order.attributed', label: 'Order Placed' },
+  { value: 'payment_link.created', label: 'Payment Link Sent' },
+  { value: 'customer.created', label: 'Customer Created' },
+  { value: 'audit.exported', label: 'Activity Exported' },
 ]
 
 const OUTCOME_STYLE = {
@@ -101,10 +101,11 @@ export default function AgentActivityPage() {
 
   const who = (e) => (e.actor && people[e.actor]) || (e.actorType === 'merchant_user' ? 'Store staff' : e.actorType === 'system' ? 'System' : 'Unknown')
   const set = (k, v) => setFilters((f) => ({ ...f, [k]: v }))
-  const cls = 'rounded-md border border-gray-300 bg-white px-3 py-2 text-sm'
+  const cls = 'rounded-md border border-gray-300 bg-white px-3 py-2 text-sm uppercase'
+  const selectCls = 'rounded-md border border-gray-300 bg-white pl-3 pr-10 py-2 text-sm'
 
   return (
-    <div className="mx-auto w-full max-w-6xl">
+    <div className="w-full">
       <div className="mb-6">
         <h1 className="text-2xl font-semibold text-gray-900">Agent activity</h1>
         <p className="mt-1 text-sm text-gray-500">
@@ -115,20 +116,20 @@ export default function AgentActivityPage() {
       <div className="mb-4 flex flex-wrap items-end gap-3">
         <label className="text-sm">
           <span className="mb-1 block text-gray-600">Agent</span>
-          <select className={cls} value={filters.agentId} onChange={(e) => set('agentId', e.target.value)}>
+          <select className={selectCls} value={filters.agentId} onChange={(e) => set('agentId', e.target.value)}>
             <option value="">Everyone</option>
             {agents.map((a) => <option key={a._id} value={a._id}>{a.name}</option>)}
           </select>
         </label>
         <label className="text-sm">
           <span className="mb-1 block text-gray-600">What happened</span>
-          <select className={cls} value={filters.action} onChange={(e) => set('action', e.target.value)}>
+          <select className={selectCls} value={filters.action} onChange={(e) => set('action', e.target.value)}>
             {GROUPS.map((g) => <option key={g.value} value={g.value}>{g.label}</option>)}
           </select>
         </label>
         <label className="text-sm">
           <span className="mb-1 block text-gray-600">Result</span>
-          <select className={cls} value={filters.outcome} onChange={(e) => set('outcome', e.target.value)}>
+          <select className={selectCls} value={filters.outcome} onChange={(e) => set('outcome', e.target.value)}>
             {OUTCOMES.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
           </select>
         </label>

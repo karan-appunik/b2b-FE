@@ -132,7 +132,7 @@ function MoreActionsMenu({ onViewEntries, onEdit, onDuplicate, onDelete }) {
       <button
         ref={buttonRef}
         onClick={toggle}
-        className="flex cursor-pointer items-center gap-1 whitespace-nowrap rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
+        className="flex cursor-pointer items-center gap-2 whitespace-nowrap rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
       >
         More actions
         <svg className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">

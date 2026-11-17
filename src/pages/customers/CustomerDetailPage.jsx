@@ -185,7 +185,7 @@ export default function CustomerDetailPage() {
       : null
 
   return (
-    <div className="mx-auto max-w-2xl">
+    <div className="w-full">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Link
@@ -431,7 +431,7 @@ export default function CustomerDetailPage() {
                 type="date"
                 value={profile.validFrom}
                 onChange={(e) => setProfile((x) => ({ ...x, validFrom: e.target.value }))}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm uppercase"
               />
             </label>
             <label className="text-sm">
@@ -440,7 +440,7 @@ export default function CustomerDetailPage() {
                 type="date"
                 value={profile.validTo}
                 onChange={(e) => setProfile((x) => ({ ...x, validTo: e.target.value }))}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm uppercase"
               />
             </label>
           </div>

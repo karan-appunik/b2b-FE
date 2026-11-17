@@ -29,7 +29,7 @@ export default function RolesPage() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-2xl">
+    <div className="w-full">
       <div className="mb-6 flex items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold text-gray-900">Roles</h1>

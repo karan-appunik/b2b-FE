@@ -116,18 +116,6 @@ function IntegrationsIcon() {
   )
 }
 
-function HelpIcon() {
-  return (
-    <svg className="h-4 w-4 shrink-0" viewBox="0 0 20 20" fill="currentColor">
-      <path
-        fillRule="evenodd"
-        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM9.34 9.472a.75.75 0 011.32-.472c.148.12.29.267.29.5 0 .276-.15.42-.4.622-.31.25-.62.5-.62 1.128a.75.75 0 001.5 0c0-.2.1-.32.35-.52.35-.28.72-.63.72-1.23 0-.6-.34-1.06-.72-1.36a2.06 2.06 0 00-1.34-.55 2.06 2.06 0 00-1.34.55c-.38.3-.72.76-.72 1.36a.75.75 0 001.5 0zM10 14.25a.875.875 0 100-1.75.875.875 0 000 1.75z"
-        clipRule="evenodd"
-      />
-    </svg>
-  )
-}
-
 function QuotesIcon() {
   return (
     <svg
@@ -250,7 +238,7 @@ function getInitials(user) {
 function ChevronIcon({ open }) {
   return (
     <svg
-      className={`h-5 w-5 shrink-0 text-gray-400 transition-transform ${open ? 'rotate-180' : ''}`}
+      className={`h-5 w-5 shrink-0 text-slate-400 transition-transform ${open ? 'rotate-180' : ''}`}
       viewBox="0 0 20 20"
       fill="currentColor"
     >
@@ -279,7 +267,7 @@ function NavGroup({ group, onNavigate }) {
     <li>
       <button
         onClick={() => setOpen((o) => !o)}
-        className="flex w-full cursor-pointer items-center justify-between rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+        className="flex w-full cursor-pointer items-center justify-between rounded-xl px-3 py-2 text-sm font-medium text-slate-300 hover:bg-white/10 hover:text-white"
       >
         <span className="flex min-w-0 items-center gap-2">
           <Icon />
@@ -298,8 +286,8 @@ function NavGroup({ group, onNavigate }) {
                 className={({ isActive }) =>
                   `block truncate whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium ${
                     isActive
-                      ? 'bg-purple-50 text-purple-700'
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                      ? 'bg-blue-600 text-white shadow-sm'
+                      : 'text-slate-300 hover:bg-white/10 hover:text-white'
                   }`
                 }
               >
@@ -331,12 +319,12 @@ function UserMenu() {
   return (
     <div ref={ref} className="relative">
       {open && (
-        <div className="absolute bottom-full left-0 right-0 mb-2 overflow-hidden rounded-lg border border-gray-200 bg-white py-1 shadow-lg">
+        <div className="absolute bottom-full left-0 right-0 mb-2 overflow-hidden rounded-xl border border-slate-700 bg-slate-800 py-1 shadow-lg">
           <button
             onClick={logout}
-            className="flex w-full cursor-pointer items-center gap-2 px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
+            className="flex w-full cursor-pointer items-center gap-2 px-3 py-2 text-left text-sm text-slate-200 hover:bg-white/10"
           >
-            <svg className="h-4 w-4 shrink-0 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+            <svg className="h-4 w-4 shrink-0 text-slate-400" viewBox="0 0 20 20" fill="currentColor">
               <path
                 fillRule="evenodd"
                 d="M3 4.25A2.25 2.25 0 0 1 5.25 2h5.5A2.25 2.25 0 0 1 13 4.25v2a.75.75 0 0 1-1.5 0v-2a.75.75 0 0 0-.75-.75h-5.5a.75.75 0 0 0-.75.75v11.5c0 .414.336.75.75.75h5.5a.75.75 0 0 0 .75-.75v-2a.75.75 0 0 1 1.5 0v2A2.25 2.25 0 0 1 10.75 18h-5.5A2.25 2.25 0 0 1 3 15.75V4.25Z"
@@ -354,23 +342,23 @@ function UserMenu() {
       )}
       <button
         onClick={() => setOpen((o) => !o)}
-        className={`flex w-full cursor-pointer items-center gap-2 rounded-lg border px-2 py-2 text-left transition-colors ${
+        className={`flex w-full cursor-pointer items-center gap-2 rounded-xl border px-2 py-2 text-left transition-colors ${
           open
-            ? 'border-gray-300 bg-gray-50'
-            : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'
+            ? 'border-slate-600 bg-slate-800'
+            : 'border-slate-700/60 bg-slate-800/60 hover:border-slate-600 hover:bg-slate-800'
         }`}
       >
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-purple-600 text-xs font-semibold text-white">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-600 text-xs font-semibold text-white">
           {getInitials(user)}
         </span>
         <span className="min-w-0 flex-1">
-          <span className="block truncate text-sm font-medium text-gray-900">
+          <span className="block truncate text-sm font-semibold text-white">
             {user?.name || 'Account'}
           </span>
-          <span className="block truncate text-xs text-gray-500">{user?.email}</span>
+          <span className="block truncate text-xs text-slate-400">{user?.email}</span>
         </span>
         <svg
-          className={`h-4 w-4 shrink-0 text-gray-400 transition-transform ${open ? 'rotate-180' : ''}`}
+          className={`h-4 w-4 shrink-0 text-slate-400 transition-transform ${open ? 'rotate-180' : ''}`}
           viewBox="0 0 20 20"
           fill="currentColor"
         >
@@ -398,18 +386,18 @@ export default function Sidebar({ isOpen = false, onClose = () => {} }) {
         />
       )}
       <nav
-        className={`fixed inset-y-0 left-0 z-50 flex h-screen w-[255px] shrink-0 flex-col border-r border-[#ebe6e7] bg-[#fbf9fa] transition-transform duration-200 lg:sticky lg:top-0 lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 flex h-screen w-[255px] shrink-0 flex-col border-r border-slate-800 bg-[#0f172a] text-slate-200 dark:bg-[#111c33] transition-transform duration-200 lg:sticky lg:top-0 lg:translate-x-0 ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         <div className="flex-1 overflow-y-auto p-4">
-          <div className="mb-6 flex items-center gap-2 rounded-lg border border-[#ebe6e7] px-2 py-2">
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 text-sm font-bold text-white">
+          <div className="mb-6 flex items-center gap-3 rounded-xl border border-slate-700/60 bg-slate-800/80 px-3 py-3">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-blue-600 text-base font-extrabold text-white shadow-sm">
               S
             </span>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-semibold text-gray-900">Wholesale</p>
-              {user?.shop && <p className="truncate text-xs text-gray-500">{user.shop}</p>}
+              <p className="truncate text-sm font-bold tracking-tight text-white">Wholesale</p>
+              {user?.shop && <p className="truncate text-[11px] text-slate-400">{user.shop}</p>}
             </div>
             <ChevronIcon open={false} />
           </div>
@@ -421,10 +409,10 @@ export default function Sidebar({ isOpen = false, onClose = () => {} }) {
                   end={link.end}
                   onClick={onClose}
                   className={({ isActive }) =>
-                    `flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium ${
+                    `flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium ${
                       isActive
-                        ? 'bg-purple-50 text-purple-700'
-                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                        ? 'bg-blue-600 font-bold text-white shadow-sm'
+                        : 'text-slate-300 hover:bg-white/10 hover:text-white'
                     }`
                   }
                 >
@@ -438,14 +426,7 @@ export default function Sidebar({ isOpen = false, onClose = () => {} }) {
             ))}
           </ul>
         </div>
-        <div className="shrink-0 border-t border-gray-200 p-4">
-          <a
-            href="#"
-            className="mb-3 flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-          >
-            <HelpIcon />
-            Help
-          </a>
+        <div className="shrink-0 border-t border-slate-800 p-4">
           <UserMenu />
         </div>
       </nav>

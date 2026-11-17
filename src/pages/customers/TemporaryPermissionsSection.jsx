@@ -120,7 +120,7 @@ export default function TemporaryPermissionsSection({ agent }) {
               min={toDateInput(0)}
               max={toDateInput(MAX_DAYS)}
               onChange={(e) => setField('validTo', e.target.value)}
-              className={inputClass}
+              className={`${inputClass} uppercase`}
             />
           </label>
         </div>

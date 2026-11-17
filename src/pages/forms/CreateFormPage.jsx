@@ -38,7 +38,7 @@ export default function CreateFormPage() {
   }
 
   return (
-    <div className="mx-auto w-[672px] max-w-full">
+    <div className="w-full">
       <Link to="/forms" className="flex items-center gap-2 text-gray-900 hover:text-gray-700">
         <svg className="h-5 w-5 shrink-0" viewBox="0 0 20 20" fill="currentColor">
           <path

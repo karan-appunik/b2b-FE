@@ -28,12 +28,12 @@ export default function Register() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
       <div className="w-full max-w-sm rounded-xl border border-gray-200 bg-white p-8 shadow-sm">
-        <h1 className="mb-1 text-xl font-semibold text-gray-900">SparkLayer</h1>
+        <h1 className="mb-1 text-xl font-semibold text-gray-900">Appunik Wholesale</h1>
         <p className="mb-6 text-sm text-gray-500">Create the admin account</p>
 
         {!shop && (
           <p className="mb-4 text-sm text-red-600">
-            No shop detected. Open this page from the SparkLayer admin app link to register.
+            No shop detected. Open this page from the Appunik Wholesale admin app link to register.
           </p>
         )}
 

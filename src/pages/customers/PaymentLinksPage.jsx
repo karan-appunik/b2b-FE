@@ -63,7 +63,7 @@ export default function PaymentLinksPage() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-4xl">
+    <div className="w-full">
       <div className="mb-6">
         <h1 className="text-2xl font-semibold text-gray-900">Payment links</h1>
         <p className="mt-1 text-sm text-gray-500">
@@ -73,28 +73,30 @@ export default function PaymentLinksPage() {
 
       {error && <p className="mb-3 text-sm text-red-600">{error}</p>}
 
-      <div className="space-y-3">
+      <div className="space-y-4">
         {links.map((l) => (
-          <div key={l.id} className="rounded-xl border border-gray-200 bg-white">
-            <div className="flex w-full flex-wrap items-center justify-between gap-3 p-4">
+          <div key={l.id} className="rounded-xl border border-gray-200 bg-white shadow-xs transition hover:border-gray-300">
+            <div className="flex w-full flex-wrap items-center justify-between gap-4 p-5">
             <button
               onClick={() => setOpen(open === l.id ? null : l.id)}
               aria-expanded={open === l.id}
-              className="min-w-0 flex-1 text-left"
+              className="min-w-0 flex-1 text-left cursor-pointer"
             >
-              <div className="min-w-0">
-                <div className="text-sm font-semibold text-gray-900">
-                  {formatMoney({ amount: l.amount, currency: l.currency })}
-                  <span className={`ml-2 rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_STYLES[l.status] || 'bg-gray-100 text-gray-600'}`}>
+              <div className="min-w-0 space-y-1.5">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-base font-semibold text-gray-900">
+                    {formatMoney({ amount: l.amount, currency: l.currency })}
+                  </span>
+                  <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${STATUS_STYLES[l.status] || 'bg-gray-100 text-gray-600'}`}>
                     {STATUS_LABELS[l.status] || l.status}
                   </span>
                   {l.reconcileFlag && (
-                    <span className="ml-2 rounded-full bg-red-50 px-2 py-0.5 text-xs font-medium text-red-700">
+                    <span className="rounded-full bg-red-50 px-2.5 py-0.5 text-xs font-medium text-red-700">
                       Amount differs — review
                     </span>
                   )}
                 </div>
-                <div className="mt-0.5 text-xs text-gray-500">
+                <div className="text-sm leading-relaxed text-gray-500">
                   {l.customerName || 'Customer'} · sent by {l.agentName || 'agent'} · {when(l.createdAt)}
                 </div>
               </div>
@@ -103,7 +105,7 @@ export default function PaymentLinksPage() {
                 <button
                   type="button"
                   onClick={() => revoke(l.id)}
-                  className="rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
+                  className="rounded-md border border-gray-300 px-3.5 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 cursor-pointer"
                 >
                   Withdraw
                 </button>
@@ -111,8 +113,8 @@ export default function PaymentLinksPage() {
             </div>
 
             {open === l.id && (
-              <div className="border-t border-gray-100 p-4 text-sm text-gray-700">
-                <div className="mb-3 grid gap-1 sm:grid-cols-2">
+              <div className="border-t border-gray-100 p-5 text-sm text-gray-700">
+                <div className="mb-4 grid gap-2 sm:grid-cols-2">
                   <div>Emailed to: {l.sentTo || '—'}</div>
                   <div>Expires: {when(l.expiresAt)}</div>
                   <div>First opened: {when(l.openedAt)}</div>

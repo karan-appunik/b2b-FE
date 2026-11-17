@@ -29,7 +29,7 @@ const STATUS_STYLES = {
 
 const FILTERS = [
   { value: 'all', label: 'All' },
-  { value: 'PENDING_APPROVAL', label: 'Waiting for approval' },
+  { value: 'PENDING_APPROVAL', label: 'Waiting for Approval' },
   { value: 'SENT', label: 'Sent' },
   { value: 'ACCEPTED', label: 'Accepted' },
   { value: 'CONVERTED', label: 'Ordered' },
@@ -106,7 +106,7 @@ export default function QuotesPage() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-4xl">
+    <div className="w-full">
       <div className="mb-6">
         <h1 className="text-2xl font-semibold text-gray-900">Quotes</h1>
         <p className="mt-1 text-sm text-gray-500">
@@ -130,29 +130,29 @@ export default function QuotesPage() {
 
       {error && <p className="mb-3 text-sm text-red-600">{error}</p>}
 
-      <div className="space-y-3">
+      <div className="space-y-4">
         {quotes.map((q) => (
-          <div key={q.id} className="rounded-xl border border-gray-200 bg-white">
-            <button onClick={() => toggle(q.id)} className="flex w-full flex-wrap items-center justify-between gap-3 p-4 text-left">
-              <div className="min-w-0">
-                <div className="text-sm font-semibold text-gray-900">
-                  {q.number}
+          <div key={q.id} className="rounded-xl border border-gray-200 bg-white shadow-xs transition hover:border-gray-300">
+            <button onClick={() => toggle(q.id)} className="flex w-full flex-wrap items-center justify-between gap-4 p-5 text-left cursor-pointer hover:bg-gray-50/40 rounded-xl transition">
+              <div className="min-w-0 space-y-1.5">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-sm font-semibold text-gray-900">{q.number}</span>
                   <span
-                    className={`ml-2 rounded-full px-2 py-0.5 text-xs font-medium ${
+                    className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
                       STATUS_STYLES[q.status] || 'bg-gray-100 text-gray-500'
                     }`}
                   >
                     {STATUS_LABELS[q.status] || q.status}
                   </span>
-                  {q.currentVersion > 1 && <span className="ml-2 text-xs text-gray-400">version {q.currentVersion}</span>}
+                  {q.currentVersion > 1 && <span className="text-xs text-gray-400">version {q.currentVersion}</span>}
                 </div>
-                <div className="mt-1 text-sm text-gray-600">
-                  {q.ownerName || 'An agent'} for <strong>{q.customerName || 'a customer'}</strong>
+                <div className="text-sm leading-relaxed text-gray-600">
+                  {q.ownerName || 'An agent'} for <strong className="text-gray-900">{q.customerName || 'a customer'}</strong>
                   {q.customerCompany ? ` (${q.customerCompany})` : ''}
                 </div>
               </div>
-              <div className="text-right text-sm">
-                <div className="font-medium text-gray-900">
+              <div className="text-right text-sm space-y-1">
+                <div className="font-semibold text-gray-900">
                   {q.totals ? formatMoney({ amount: q.totals.subtotal, currency: q.currency }) : '—'}
                 </div>
                 <div className="text-xs text-gray-400">
@@ -162,7 +162,7 @@ export default function QuotesPage() {
             </button>
 
             {open === q.id && (
-              <div className="border-t border-gray-100 p-4">
+              <div className="border-t border-gray-100 p-5">
                 {!detail && <p className="text-sm text-gray-400">Loading…</p>}
 
                 {detail && (

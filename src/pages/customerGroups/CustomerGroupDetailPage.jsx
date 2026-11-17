@@ -37,7 +37,7 @@ function MoreActionsMenu({ onViewCustomers, onDelete, canDelete }) {
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen((o) => !o)}
-        className="flex cursor-pointer items-center gap-1 rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
+        className="flex cursor-pointer items-center gap-2 rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
       >
         More actions
         <svg className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
@@ -407,7 +407,7 @@ export default function CustomerGroupDetailPage() {
   }
 
   return (
-    <div className="mx-auto max-w-6xl">
+    <div className="w-full">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Link
@@ -468,7 +468,7 @@ export default function CustomerGroupDetailPage() {
 
             <div className="mt-4">
               <label className="mb-1 block text-sm font-medium text-gray-700">Customer tag</label>
-              <p className="mb-2 text-xs text-gray-400">Applied to customers to enable SparkLayer.</p>
+              <p className="mb-2 text-xs text-gray-400">Applied to customers to enable Appunik Wholesale.</p>
               {group.isBase ? (
                 <div className="flex items-center gap-3">
                   <span className="rounded-full bg-green-50 px-2.5 py-1 text-xs font-medium text-green-700">

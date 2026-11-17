@@ -1858,6 +1858,7 @@ function PreviewField({ field, t }) {
           <input
             type={field.type === 'phone' ? 'tel' : field.type === 'datetime' ? 'datetime-local' : field.type}
             {...commonProps}
+            className={`${commonProps.className} ${['date', 'datetime', 'time'].includes(field.type) ? 'uppercase' : ''}`}
           />
         )
       )}

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import BackButton from '../../components/BackButton'
 import * as priceListsApi from '../../api/priceLists.api'
 import * as productsApi from '../../api/products.api'
 import { parseCsv, slugify } from '../../utils/csv'
@@ -115,11 +116,11 @@ export default function PriceListCreatePage() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl">
-      <Link to="/price-lists" className="text-sm text-purple-600 hover:underline">
-        ← Price Lists
-      </Link>
-      <h1 className="mt-1 text-2xl font-semibold text-gray-900">Create price list</h1>
+    <div className="w-full">
+      <div className="flex items-center gap-2">
+        <BackButton to="/price-lists" label="Back to price lists" />
+        <h1 className="text-2xl font-semibold text-gray-900">Create price list</h1>
+      </div>
       <p className="mt-1 text-sm text-gray-500">
         Choose how you want your pricing to work with automatic and manual pricing.
       </p>
@@ -194,8 +195,8 @@ export default function PriceListCreatePage() {
                   onChange={(e) => setDiscountType(e.target.value)}
                   className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none"
                 >
-                  <option value="percentage">Percentage off</option>
-                  <option value="fixed">Fixed amount off</option>
+                  <option value="percentage">Percentage Off</option>
+                  <option value="fixed">Fixed Amount Off</option>
                 </select>
               </div>
               <div>

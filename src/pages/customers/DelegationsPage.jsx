@@ -81,7 +81,7 @@ export default function DelegationsPage() {
   const shown = filter ? rows.filter((r) => r.status === filter) : rows
 
   return (
-    <div className="mx-auto w-full max-w-5xl space-y-6">
+    <div className="space-y-6">
       <div className="rounded-2xl border border-gray-200/90 bg-white p-6 shadow-xs">
         <h1 className="text-2xl font-bold tracking-tight text-gray-900">Delegations</h1>
         <p className="mt-1 max-w-2xl text-sm leading-relaxed text-gray-500">
@@ -114,7 +114,7 @@ export default function DelegationsPage() {
           </label>
           <label className="block text-sm">
             <span className="mb-1 block font-medium text-gray-700">Until</span>
-            <input id="deleg-end" type="datetime-local" required value={form.endsAt} onChange={(e) => setForm({ ...form, endsAt: e.target.value })} className={inputClass} />
+            <input id="deleg-end" type="datetime-local" required value={form.endsAt} onChange={(e) => setForm({ ...form, endsAt: e.target.value })} className={`${inputClass} uppercase`} />
           </label>
           <label className="block text-sm">
             <span className="mb-1 block font-medium text-gray-700">Reason</span>
@@ -140,7 +140,7 @@ export default function DelegationsPage() {
       <div className="rounded-2xl border border-gray-200/90 bg-white p-6 shadow-xs">
         <div className="mb-4 flex items-center justify-between gap-3">
           <h2 className="text-base font-semibold text-gray-900">All delegations</h2>
-          <select aria-label="Filter by status" value={filter} onChange={(e) => setFilter(e.target.value)} className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm">
+          <select aria-label="Filter by status" value={filter} onChange={(e) => setFilter(e.target.value)} className="rounded-lg border border-gray-300 bg-white pl-3.5 pr-10 py-2 text-sm">
             <option value="">All</option>
             <option value="active">Active</option>
             <option value="scheduled">Scheduled</option>
@@ -149,20 +149,33 @@ export default function DelegationsPage() {
           </select>
         </div>
 
-        <div className="space-y-3">
+        <div className="space-y-4">
           {shown.map((d) => (
-            <div key={d.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-gray-200 p-4">
-              <div className="min-w-0 text-sm">
-                <div className="font-semibold text-gray-900">
-                  {d.delegator.name} <span className="font-normal text-gray-500">to</span> {d.delegate.name}
-                  <span className={`ml-2 rounded-full border px-2 py-0.5 text-xs font-medium ${STATUS_STYLE[d.status]}`}>{d.status === 'revoked' ? 'ended' : d.status}</span>
+            <div key={d.id} className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-gray-200 bg-white p-5 shadow-xs transition hover:border-gray-300">
+              <div className="min-w-0 space-y-2 text-sm">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="font-semibold text-gray-900">
+                    {d.delegator.name} <span className="font-normal text-gray-500">to</span> {d.delegate.name}
+                  </span>
+                  <span className={`rounded-full border px-2.5 py-0.5 text-xs font-medium capitalize ${STATUS_STYLE[d.status]}`}>
+                    {d.status === 'revoked' ? 'Ended' : d.status}
+                  </span>
                 </div>
-                <div className="text-gray-600">
-                  {new Date(d.startsAt).toLocaleString()} to {new Date(d.endsAt).toLocaleString()} · {d.reason}
+                <div className="text-sm leading-relaxed text-gray-600">
+                  <span className="font-medium text-gray-700">{new Date(d.startsAt).toLocaleString()}</span>
+                  <span className="mx-1.5 text-gray-400">to</span>
+                  <span className="font-medium text-gray-700">{new Date(d.endsAt).toLocaleString()}</span>
+                  {d.reason && (
+                    <>
+                      <span className="mx-2 text-gray-300">·</span>
+                      <span className="text-gray-600">{d.reason}</span>
+                    </>
+                  )}
                 </div>
-                <div className="mt-0.5 text-xs text-gray-500">
+                <div className="text-xs leading-relaxed text-gray-500">
                   {d.includeQuotes ? 'Exceptions and quotes' : 'Exceptions only'}
-                  {d.coverAccess ? ' · with access to their customers' : ''} · used {d.usedTimes} {d.usedTimes === 1 ? 'time' : 'times'}
+                  {d.coverAccess ? ' · with access to their customers' : ''}
+                  {' · '}used {d.usedTimes} {d.usedTimes === 1 ? 'time' : 'times'}
                   {d.revokedReason ? ` · ${d.revokedReason}` : ''}
                 </div>
               </div>
@@ -171,7 +184,7 @@ export default function DelegationsPage() {
                   type="button"
                   disabled={endingId === d.id}
                   onClick={() => end(d.id)}
-                  className="rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                  className="rounded-md border border-gray-300 px-3.5 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
                 >
                   {endingId === d.id ? 'Ending…' : 'End now'}
                 </button>

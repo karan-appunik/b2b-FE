@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import BackButton from '../../components/BackButton'
 import * as customerGroupsApi from '../../api/customerGroups.api'
 import * as priceListsApi from '../../api/priceLists.api'
 import {
@@ -67,11 +68,11 @@ export default function CustomerGroupCreatePage() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl">
-      <Link to="/customers/groups" className="text-sm text-purple-600 hover:underline">
-        ← Customer Groups
-      </Link>
-      <h1 className="mt-1 text-2xl font-semibold text-gray-900">Create customer group</h1>
+    <div className="w-full">
+      <div className="flex items-center gap-2">
+        <BackButton to="/customers/groups" label="Back to customer groups" />
+        <h1 className="text-2xl font-semibold text-gray-900">Create customer group</h1>
+      </div>
       <p className="mt-1 text-sm text-gray-500">
         Customers with this Shopify tag will automatically get the assigned price lists. Anything
         you don't override here inherits from the base customer group.
